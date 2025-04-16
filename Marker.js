@@ -149,58 +149,46 @@ function setUserId() {
 
 let beantworteteRäume = new Set();
 
-export function zeigeQuiz(raum) {
-    const frageText = document.getElementById("quizFrage");
-    const optionenContainer = document.getElementById("quizOptionen");
-    const frageDaten = quizDaten[raum];
+export async function zeigeQuiz(raum) {
+    return new Promise(async (resolve) => {
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+            alert("Bitte zuerst eine Matrikelnummer eingeben.");
+            document.getElementById("userIdContainer").style.display = "block";
+            resolve();
+            return;
+        }
 
-    frageText.textContent = frageDaten.frage;
-    optionenContainer.innerHTML = "";
+        const nutzerFragen = await getUserQuizFragen(userId);
+        const beantworteteFragen = await getUserBeantworteteFragen(userId);
 
-    const antworten = [
-        frageDaten.antwort, // richtige
-        "Falsch A", "Falsch B", "Falsch C"
-    ].sort(() => Math.random() - 0.5); // mischen
+        if (!nutzerFragen.includes(raum) || beantworteteFragen.includes(raum)) {
+            resolve();
+            return;
+        }
 
-    antworten.forEach(antwort => {
-        const btn = document.createElement("button");
-        btn.textContent = antwort;
-        btn.className = "quiz-option";
-        btn.onclick = () => sendeAntwort(raum, antwort);
-        optionenContainer.appendChild(btn);
+        if (quizFragen[raum]) {
+            document.getElementById("quizFrage").innerText = quizFragen[raum].frage;
+            const optionenContainer = document.getElementById("quizOptionen");
+            optionenContainer.innerHTML = "";
+
+            quizFragen[raum].optionen.forEach(option => {
+                const button = document.createElement("button");
+                button.innerText = option;
+                button.classList.add("quiz-option");
+
+                button.addEventListener("click", async () => {
+                    await sendQuizAnswer(userId, raum, option);
+                    schließeQuiz();
+                    resolve();
+                });
+
+                optionenContainer.appendChild(button);
+            });
+
+            document.getElementById("quizContainer").style.display = "block";
+        }
     });
-
-    document.getElementById("quizContainer").style.display = "block";
-}
-
-async function sendeAntwort(raum, auswahl) {
-    const frageDaten = quizDaten[raum];
-
-    const payload = {
-        userId: window.userId,
-        raum,
-        auswahl,
-        frage: frageDaten.frage,
-        richtigeAntwort: frageDaten.antwort,
-        punkte: auswahl === frageDaten.antwort ? frageDaten.punkte : 0
-    };
-
-    await fetch("/api/quiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    });
-
-    // nächste Frage holen
-    const res = await fetch(`/api/quiz/start/${window.userId}`);
-    const data = await res.json();
-
-    if (data.done) {
-        document.getElementById("quizContainer").style.display = "none";
-        alert("🎉 Alle Fragen beantwortet!");
-    } else {
-        zeigeQuizFrage(data.frage);
-    }
 }
 
 

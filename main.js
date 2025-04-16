@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://backend-test-phase.vercel.app";
+const BACKEND_URL = "https://virtuelles-labor-backend.vercel.app";
 
 async function sendDataToServer(userId, data) {
     const response = await fetch(`${BACKEND_URL}/api/data`, {
@@ -9,38 +9,6 @@ async function sendDataToServer(userId, data) {
 
     const result = await response.json();
 }
-
-window.setUserId = async function () {
-    const input = document.getElementById("userIdInput");
-    const userId = input.value.trim();
-
-    if (!userId) {
-        alert("Bitte Matrikelnummer eingeben!");
-        return;
-    }
-
-    window.userId = userId; // global speichern, falls noch nicht vorhanden
-
-    // UI verstecken
-    document.getElementById("userIdContainer").style.display = "none";
-
-    // 🚀 Anfrage an /api/quiz/start/:userId
-    try {
-        const res = await fetch(`/api/quiz/start/${userId}`);
-        const result = await res.json();
-
-        if (result.done) {
-            alert("✅ Du hast alle Fragen bereits beantwortet!");
-        } else if (result.frage) {
-            zeigeQuizFrage(result.frage); // Funktion zum Anzeigen der Frage aufrufen
-        } else {
-            console.warn("⚠️ Unerwartete Antwort:", result);
-        }
-    } catch (err) {
-        console.error("Fehler beim Abrufen der ersten Frage:", err);
-        alert("Es gab ein Problem beim Starten des Quiz.");
-    }
-};
 
 export async function getUserData(userId) {
     try {
