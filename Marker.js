@@ -149,7 +149,7 @@ function setUserId() {
 
 let beantworteteRäume = new Set();
 
-export function zeigeQuizFrage(raum) {
+export function zeigeQuiz(raum) {
     const frageText = document.getElementById("quizFrage");
     const optionenContainer = document.getElementById("quizOptionen");
     const frageDaten = quizDaten[raum];
