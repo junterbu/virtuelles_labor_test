@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://virtuelles-labor-backend.vercel.app";
+const BACKEND_URL = "https://backend-test-phase.vercel.app";
 
 async function sendDataToServer(userId, data) {
     const response = await fetch(`${BACKEND_URL}/api/data`, {
