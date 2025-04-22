@@ -61,7 +61,7 @@ export async function getUserQuizFragen(userId) {
 
 export async function getUserBeantworteteFragen(userId) {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/quizErgebnisse/${userId}`);
+        const response = await fetch(`${BACKEND_URL}/api/beantworteteFragen/${userId}`);
         if (!response.ok) throw new Error("Fehler beim Abrufen der beantworteten Fragen");
 
         const data = await response.json();
