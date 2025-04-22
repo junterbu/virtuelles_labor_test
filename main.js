@@ -67,7 +67,7 @@ export async function getUserBeantworteteFragen(userId) {
         const data = await response.json();
 
         // Extrahiere die Räume aus den gespeicherten Quiz-Ergebnissen
-        return data.ergebnisse.map(q => q.raum) || [];
+        return data.beantwortete_fragen.map(q => q.raum) || [];
     } catch (error) {
         console.error("❌ Fehler beim Abrufen der beantworteten Fragen:", error);
         return [];
