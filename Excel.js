@@ -2,7 +2,7 @@ import { solveLinearSystem, invertMatrix, multiplyMatrixVector } from "./Marshal
 import { quizPunkte, quizFragen } from "./Marker.js";
 
 
-const BACKEND_URL = "https://virtuelles-labor-backend.vercel.app";
+const BACKEND_URL = "https://backend-test-phase.vercel.app";
 
 async function fetchQuizPunkte(userId) {
     try {
