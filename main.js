@@ -30,21 +30,18 @@ export async function getUserData(userId) {
 
 
 
-export async function sendQuizAnswer(userId, raum, auswahl) {
+export async function sendQuizAnswer(userId, frage, antwort, korrekt) {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/quiz`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId, raum, auswahl })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Fehler beim Senden der Quiz-Antwort: ${response.status}`);
-        }
-
-        const result = await response.json();
-    } catch (error) {
-        console.error("❌ Fehler in sendQuizAnswer:", error);
+      const res = await fetch(`${BACKEND_URL}/api/quiz`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, frage, antwort, korrekt })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");
+      console.log("✅ Antwort gespeichert:", data);
+    } catch (err) {
+      console.error("❌ Fehler beim Speichern der Antwort:", err);
     }
 }
 

@@ -39,7 +39,7 @@ function loadMarshallModel() {
                 // Setze die Animationseigenschaften
                 action.setLoop(THREE.LoopOnce); // Animation nur einmal abspielen
                 action.clampWhenFinished = true; // Animation hält an, wenn sie endet
-                action.timeScale = 24 / FPS; // Geschwindigkeit der Animation
+                action.timeScale = 1 / FPS; // Geschwindigkeit der Animation
 
                 // Suche nach dem Button "button_on" und dem Objekt "Probekörper" in der Szene
                 marshallModel.traverse((child) => {

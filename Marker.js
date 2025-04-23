@@ -180,7 +180,7 @@ export async function zeigeQuiz(raum) {
                 button.classList.add("quiz-option");
 
                 button.addEventListener("click", async () => {
-                    await sendQuizAnswer(userId, raum, option);
+                    await sendQuizAnswer(userId, frage, antwort, korrekt);
                     schließeQuiz();
                     resolve();
                 });
@@ -214,6 +214,8 @@ export async function speicherePunkte(raum, auswahl) {
         if (quizFragen[raum].antwort === auswahl) {
             quizPunkteNeu += quizFragen[raum].punkte;
         }
+        const korrekt = quizFragen[raum].antwort === auswahl;
+        await sendQuizAnswer(userId, raum, auswahl, korrekt);
         beantworteteRäume.push(raum);
     }
 
