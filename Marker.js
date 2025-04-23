@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 import { getUserData } from "./main.js"; // Falls noch nicht importiert
 import { sendQuizAnswer } from "./main.js";
 import { getUserQuizFragen, getUserBeantworteteFragen } from "./main.js";
@@ -145,6 +144,9 @@ function setUserId() {
 
     localStorage.setItem("userId", userId);
     document.getElementById("userIdContainer").style.display = "none"; // Eingabemaske ausblenden
+    getUserData(userId).then(data => {
+        console.log("✅ Benutzerdaten vom Backend:", data);
+    });
 }
 
 let beantworteteRäume = new Set();
