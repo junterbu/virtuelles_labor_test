@@ -187,6 +187,7 @@ export async function zeigeQuiz(raum) {
                     } else {
                         punkte = 0
                     }
+                    console.log(punkte)
                     await sendQuizAnswer(userId, raum, option, punkte);
                     schließeQuiz();
                     resolve();
