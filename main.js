@@ -28,6 +28,8 @@ export async function getUserData(userId) {
     }
 }
 
+
+
 export async function sendQuizAnswer(userId, raum, auswahl) {
     try {
         const response = await fetch(`${BACKEND_URL}/api/quiz`, {

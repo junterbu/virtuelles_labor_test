@@ -228,6 +228,10 @@ function schließeQuiz() {
 
 window.setUserId = setUserId;
 
+if (userId) {
+    getUserData(userId);
+};
+
 // // Marker für den Proberaum zum Lagerraum
 // let proberaumlagerMarkerGeometry = new THREE.PlaneGeometry(1, 0.5);
 // let proberaumlagerMarkerMaterial = new THREE.MeshStandardMaterial({ color: 0xbebdb8 ,side: THREE.DoubleSide })  
