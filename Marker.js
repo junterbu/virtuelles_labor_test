@@ -180,7 +180,7 @@ export async function zeigeQuiz(raum) {
                 button.classList.add("quiz-option");
 
                 button.addEventListener("click", async () => {
-                    await speicherePunkte(raum, auswahl);
+                    await speicherePunkte(raum, option);
                     schließeQuiz();
                     resolve();
                 });
