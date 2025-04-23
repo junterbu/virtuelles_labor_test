@@ -181,7 +181,13 @@ export async function zeigeQuiz(raum) {
 
                 button.addEventListener("click", async () => {
                     const korrekt = quizFragen[raum].antwort === option;
-                    await sendQuizAnswer(userId, raum, option, korrekt);
+                    let punkte
+                    if (korrekt) {
+                        punkte = 10
+                    } else {
+                        punkte = 0
+                    }
+                    await sendQuizAnswer(userId, raum, option, punkte);
                     schließeQuiz();
                     resolve();
                 });
