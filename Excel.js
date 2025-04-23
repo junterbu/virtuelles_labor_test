@@ -26,25 +26,25 @@ async function fetchQuizResults(userId) {
     }
 }
 
-async function sendPDFByEmail(userId, pdfBlob) {
-    const formData = new FormData();
-    formData.append("userId", userId);
+// async function sendPDFByEmail(userId, pdfBlob) {
+//     const formData = new FormData();
+//     formData.append("userId", userId);
     
-    // PDF als Datei (`File`) anfügen
-    const file = new File([pdfBlob], `Pruefbericht_${userId}.pdf`, { type: "application/pdf" });
-    formData.append("pdf", file);
+//     // PDF als Datei (`File`) anfügen
+//     const file = new File([pdfBlob], `Pruefbericht_${userId}.pdf`, { type: "application/pdf" });
+//     formData.append("pdf", file);
 
-    try {
-        const response = await fetch(`${BACKEND_URL}/api/uploadPDF`, {
-            method: "POST",
-            body: formData
-        });
+//     try {
+//         const response = await fetch(`${BACKEND_URL}/api/uploadPDF`, {
+//             method: "POST",
+//             body: formData
+//         });
 
-        const result = await response.json();
-    } catch (error) {
-        console.error("❌ Fehler beim Speichern des PDFs in Vercel Storage:", error);
-    }
-}
+//         const result = await response.json();
+//     } catch (error) {
+//         console.error("❌ Fehler beim Speichern des PDFs in Vercel Storage:", error);
+//     }
+// }
 
 export async function generatePDFReportextern(mischgutName, eimerWerte, bitumengehalt, Rohdichten, raumdichten, sieblinieCanvas) {
     const { jsPDF } = window.jspdf;
@@ -502,7 +502,7 @@ export async function generatePDFReportintern(mischgutName, eimerWerte, bitumeng
         const pdfBlob = pdf.output("blob");
 
         // Speichern in Firebase oder per E-Mail senden
-        sendPDFByEmail(userId, pdfBlob);
+        // sendPDFByEmail(userId, pdfBlob);
         saveLaborResults(userId, x_max, y_max);
     }, 500);
 
