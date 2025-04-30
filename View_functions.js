@@ -7,6 +7,7 @@ import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaum
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js";
 import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions } from "./main.js";
+import { monitorPerformance, logGPUInfo } from "./performance_monitor.js";
 // Bestimmen Sie das Event basierend auf dem Gerät
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
 
@@ -59,12 +60,16 @@ function handleMarkerClick(marker) {
     } 
 }
 
+
 export let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
 document.body.appendChild(renderer.domElement);
 renderer.antialias = false;
 renderer.outputEncoding = THREE.sRGBEncoding; // Verbessert Farben ohne zusätzlichen Speicherbedarf
 renderer.shadowMap.enabled = false; // Nur aktivieren, wenn Schatten notwendig
+
+monitorPerformance(renderer, scene);
+logGPUInfo(renderer);
 
 // WebXR-Button hinzufügen
 document.body.appendChild(VRButton.createButton(renderer));

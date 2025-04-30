@@ -1,3 +1,5 @@
+import { monitorPerformance, logGPUInfo } from "./performance_monitor";
+
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
 
 async function sendDataToServer(userId, data) {
