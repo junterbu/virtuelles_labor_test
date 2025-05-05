@@ -82,28 +82,29 @@ function loadMarshallModel() {
                         let intersects = raycaster.intersectObject(buttonOn, true);
                         const baseValue = berechneGroesstkorn(eimerWerte) || null; // Ersetze mit deiner tatsächlichen Variable/Funktion
                         const bitumenValues = bitumengehalt; // Ersetze mit deinem Mechanismus
-                    
-                        if (baseValue === 0) {
-                            alert("Bitte wähle ein Gestein aus.");
-                            return;
-                        }
-                    
-                        if (selectedMix === "Bitte klicken") {
-                            alert("Bitte wähle eine Asphaltmischung aus.");
-                            return;
-                        }
-                    
-                        if (!bitumenValues || bitumenValues.length < 3) {
-                            alert("Bitte wähle drei verschiedene Bitumengehalte aus.");
-                            return;
-                        }
-                    
-                        const uniqueValues = [...new Set(bitumenValues)];
-                        if (uniqueValues.length < 3) {
-                            alert("Bitte stelle sicher, dass die Bitumengehalte unterschiedlich sind.");
-                            return;
-                        }
+
                         if (intersects.length > 0) {
+                            console.log(baseValue)
+                            if (baseValue === 0) {
+                                alert("Bitte wähle ein Gestein aus.");
+                                return;
+                            }
+                        
+                            if (selectedMix === "Bitte klicken") {
+                                alert("Bitte wähle eine Asphaltmischung aus.");
+                                return;
+                            }
+                        
+                            if (!bitumenValues || bitumenValues.length < 3) {
+                                alert("Bitte wähle drei verschiedene Bitumengehalte aus.");
+                                return;
+                            }
+                        
+                            const uniqueValues = [...new Set(bitumenValues)];
+                            if (uniqueValues.length < 3) {
+                                alert("Bitte stelle sicher, dass die Bitumengehalte unterschiedlich sind.");
+                                return;
+                            }
                             playAnimation();
                             animate();
                             // generateExcelAfterMarshall();
