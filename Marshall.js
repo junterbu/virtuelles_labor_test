@@ -80,7 +80,7 @@ function loadMarshallModel() {
                         raycaster.setFromCamera(mouse, camera);
 
                         let intersects = raycaster.intersectObject(buttonOn, true);
-                        const baseValue = berechneGroesstkorn(eimerWerte) || null; // Ersetze mit deiner tatsächlichen Variable/Funktion
+                        const baseValue = berechneGroesstkorn(eimerWerte); // Ersetze mit deiner tatsächlichen Variable/Funktion
                         const bitumenValues = bitumengehalt; // Ersetze mit deinem Mechanismus
 
                         if (intersects.length > 0) {
