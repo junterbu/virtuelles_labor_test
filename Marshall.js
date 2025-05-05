@@ -80,7 +80,29 @@ function loadMarshallModel() {
                         raycaster.setFromCamera(mouse, camera);
 
                         let intersects = raycaster.intersectObject(buttonOn, true);
-
+                        const baseValue = hohlraumTabelle[maxKorn] || null; // Ersetze mit deiner tatsächlichen Variable/Funktion
+                        const bitumenValues = bitumengehalt; // Ersetze mit deinem Mechanismus
+                    
+                        if (baseValue === 0) {
+                            alert("Bitte wähle ein Gestein aus.");
+                            return;
+                        }
+                    
+                        if (selectedMix === "Bitte klicken") {
+                            alert("Bitte wähle eine Asphaltmischung aus.");
+                            return;
+                        }
+                    
+                        if (!bitumenValues || bitumenValues.length < 3) {
+                            alert("Bitte wähle drei verschiedene Bitumengehalte aus.");
+                            return;
+                        }
+                    
+                        const uniqueValues = [...new Set(bitumenValues)];
+                        if (uniqueValues.length < 3) {
+                            alert("Bitte stelle sicher, dass die Bitumengehalte unterschiedlich sind.");
+                            return;
+                        }
                         if (intersects.length > 0) {
                             playAnimation();
                             animate();
@@ -299,7 +321,7 @@ export function invertMatrix(matrix) {
         matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
         matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]);
 
-    if (det === 0) throw new Error("Matrix ist nicht invertierbar");
+    if (det === 0) throw new alert("Bitte drei unterschiedliche Bitumengehälter auswählen!");
 
     let inv = [
         [
@@ -404,6 +426,8 @@ async function playAnimation() {
         if (selectedMix != "Bitte klicken"){
             generatePDFReportextern(selectedMix, eimerWerte, bitumengehalt, Rohdichten, raumdichten, canvasSieblinie);
             generatePDFReportintern(selectedMix, eimerWerte, bitumengehalt, Rohdichten, raumdichten, canvasSieblinie);
+        } else {
+            alert("Bitte Asphaltmischung auswählen!")
         }
     }
 }
