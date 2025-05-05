@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 import { getUserData } from "./main.js"; // Falls noch nicht importiert
 import { sendQuizAnswer } from "./main.js";
 import { getUserQuizFragen, getUserBeantworteteFragen } from "./main.js";
@@ -145,6 +144,9 @@ function setUserId() {
 
     localStorage.setItem("userId", userId);
     document.getElementById("userIdContainer").style.display = "none"; // Eingabemaske ausblenden
+    getUserData(userId).then(data => {
+        console.log("✅ Benutzerdaten vom Backend:", data);
+    });
 }
 
 let beantworteteRäume = new Set();
@@ -178,7 +180,15 @@ export async function zeigeQuiz(raum) {
                 button.classList.add("quiz-option");
 
                 button.addEventListener("click", async () => {
-                    await sendQuizAnswer(userId, raum, option);
+                    const korrekt = quizFragen[raum].antwort === option;
+                    let punkte
+                    if (korrekt) {
+                        punkte = 10
+                    } else {
+                        punkte = 0
+                    }
+                    console.log(punkte)
+                    await sendQuizAnswer(userId, raum, option, punkte);
                     schließeQuiz();
                     resolve();
                 });
@@ -212,6 +222,8 @@ export async function speicherePunkte(raum, auswahl) {
         if (quizFragen[raum].antwort === auswahl) {
             quizPunkteNeu += quizFragen[raum].punkte;
         }
+        const korrekt = quizFragen[raum].antwort === auswahl;
+        await sendQuizAnswer(userId, raum, auswahl, korrekt);
         beantworteteRäume.push(raum);
     }
 

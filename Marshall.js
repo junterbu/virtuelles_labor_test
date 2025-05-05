@@ -433,4 +433,3 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
 });
 
-
