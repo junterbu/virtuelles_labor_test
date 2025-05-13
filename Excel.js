@@ -19,6 +19,7 @@ async function fetchQuizResults(userId) {
     try {
         const response = await fetch(`${BACKEND_URL}/api/quizErgebnisse/${userId}`);
         const data = await response.json();
+        console.log(data)
         return data.ergebnisse || [];
     } catch (error) {
         console.error("Fehler beim Abrufen der Quiz-Ergebnisse:", error);
