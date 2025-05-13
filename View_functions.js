@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import {dirLight1, } from "./Allgemeines.js";
+import {dirLight1 } from "./Allgemeines.js";
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';;
 import { isMobileDevice, scene } from './Allgemeines.js';
 import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
