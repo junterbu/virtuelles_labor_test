@@ -59,7 +59,7 @@ function handleMarkerClick(marker) {
     } 
 }
 
-export let renderer = new THREE.WebGLRenderer();
+let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
 document.body.appendChild(renderer.domElement);
 renderer.antialias = false;
@@ -538,3 +538,5 @@ onWindowResize();
 
 
 measureFrameRate();
+
+export {renderer}
