@@ -7,6 +7,10 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { camera, renderer} from "./View_functions.js";
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
 // Geräteerkennung
 export function isMobileDevice() {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -70,9 +74,7 @@ scene.add(pointLight);
 
 scene.background = new THREE.Color(0x87ceeb); // Hellblauer Himmel
 
-const composer = new EffectComposer(renderer);
-const renderPass = new RenderPass(scene, camera);
-composer.addPass(renderPass);
+
 
 // // Bloom-Effekt hinzufügen
 // const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
