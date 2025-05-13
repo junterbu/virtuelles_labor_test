@@ -1,3 +1,5 @@
+import { goToLager, goToMischraum, toMarshall } from './View_functions.js';
+
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
 
 async function sendDataToServer(userId, data) {
@@ -9,6 +11,9 @@ async function sendDataToServer(userId, data) {
 
     const result = await response.json();
 }
+
+const steps = document.querySelectorAll('.step');
+let visitedRooms = new Set();
 
 export async function getUserData(userId) {
     try {
@@ -111,3 +116,28 @@ export async function getNextQuestions(userId) {
         return [];
     }
 }
+
+function markVisited(room) {
+    visitedRooms.add(room);
+    steps.forEach(step => {
+        if (visitedRooms.has(step.dataset.room)) {
+            step.classList.add('visited');
+        }
+    });
+}
+
+// Raumwechsel bei Klick
+steps.forEach(step => {
+    step.addEventListener('click', () => {
+        const room = step.dataset.room;
+        if (room === "Lager") goToLager();
+        else if (room === "Gesteinsraum") fromProberaumtoLager(); // Annahme: von Proberaum zum Gesteinsraum
+        else if (room === "Mischraum") goToMischraum();
+        else if (room === "Marshall") toMarshall();
+    });
+});
+
+// Beispiel: Raumwechselhaken setzen (in jeder View-Funktion einbauen)
+window.addEventListener('roomChanged', (e) => {
+    markVisited(e.detail);
+});

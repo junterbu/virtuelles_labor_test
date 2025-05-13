@@ -180,6 +180,35 @@
                 transform: translate(-50%, -50%);
             }
         }
+
+        #progressBar {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .step {
+            width: 120px;
+            padding: 10px;
+            background-color: #eee;
+            border-left: 6px solid #ccc;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .step.visited {
+            border-left-color: #007bff;
+            background-color: #dbeafe;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -204,6 +233,13 @@
         <label for="percentRange">Prozentsatz aus Eimer:</label>
         <input type="range" id="percentRange" min="0" max="100" value="0" step="1" />
         <span id="percentValue">0%</span>
+    </div>
+
+    <div id="progressBar">
+        <div class="step" data-room="Lager">Lager</div>
+        <div class="step" data-room="Gesteinsraum">Gesteinsraum</div>
+        <div class="step" data-room="Mischraum">Mischraum</div>
+        <div class="step" data-room="Marshall">Marshall</div>
     </div>
 
     <!-- Bitumenanteil Schieberegler UI -->

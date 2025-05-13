@@ -157,6 +157,9 @@ export function goToLager() {
     leaveMischraum.visible = false;
     leaveMarshall.visible = false;
     lagerproberaumMarker.visible = true; 
+
+    const event = new CustomEvent('roomChanged', { detail: 'Lager' });
+    window.dispatchEvent(event);
 }
 
 async function starteDoppelQuiz() {
@@ -226,6 +229,8 @@ export function fromLagertoProberaum() {
     leaveMischraum.visible = false;
     lagerproberaumMarker.visible = false;
 
+    const event = new CustomEvent('roomChanged', { detail: 'Gesteinsraum' });
+    window.dispatchEvent(event);
 }
 
 export function fromProberaumtoLager() {
@@ -335,8 +340,6 @@ export function goToMischraum() {
             leaveMischraum.visible = true;
             document.getElementById('bitumenUI').style.display = 'block';
         }
-
-        
     }   
 
     leaveMarshall.visible = false;
@@ -348,6 +351,8 @@ export function goToMischraum() {
 
     // Blende den `bitumenUI`-Schieberegler ein
     // document.getElementById('bitumenUI').style.display = 'block';
+    const event = new CustomEvent('roomChanged', { detail: 'Mischraum' });
+    window.dispatchEvent(event);
 }
 
 export function leaveView() {
@@ -451,6 +456,8 @@ export async  function toMarshall() {
     // UI-Elemente ausblenden
     document.getElementById('uiContainer').style.display = 'none';
     document.getElementById('bitumenUI').style.display = 'none';
+    const event = new CustomEvent('roomChanged', { detail: 'Marshall' });
+    window.dispatchEvent(event);
 }
 
 
