@@ -170,25 +170,29 @@ export async function zeigeQuiz(raum) {
         }
 
         if (quizFragen[raum]) {
-            document.getElementById("quizFrage").innerText = quizFragen[raum].frage;
+            const frageObjekt = quizFragen[raum];
+            document.getElementById("quizFrage").innerText = frageObjekt.frage;
             const optionenContainer = document.getElementById("quizOptionen");
             optionenContainer.innerHTML = "";
 
-            quizFragen[raum].optionen.forEach(option => {
+            frageObjekt.optionen.forEach(option => {
                 const button = document.createElement("button");
                 button.innerText = option;
                 button.classList.add("quiz-option");
 
                 button.addEventListener("click", async () => {
-                    const korrekt = quizFragen[raum].antwort === option;
-                    let punkte
-                    if (korrekt) {
-                        punkte = 10
-                    } else {
-                        punkte = 0
-                    }
-                    console.log(punkte)
-                    await sendQuizAnswer(userId, raum, option, punkte);
+                    const korrekt = frageObjekt.antwort === option;
+                    const punkte = korrekt ? 10 : 0;
+
+                    await sendQuizAnswer(
+                        userId,
+                        raum,
+                        option,
+                        punkte,
+                        frageObjekt.frage,
+                        frageObjekt.antwort
+                    );
+
                     schließeQuiz();
                     resolve();
                 });
@@ -203,8 +207,7 @@ export async function zeigeQuiz(raum) {
 
 
 export async function speicherePunkte(raum, auswahl) {
-    userId = localStorage.getItem("userId");
-
+    const userId = localStorage.getItem("userId");
     if (!userId) return;
 
     const docRef = doc(db, "quizErgebnisse", userId);
@@ -219,11 +222,22 @@ export async function speicherePunkte(raum, auswahl) {
     }
 
     if (!beantworteteRäume.includes(raum)) {
-        if (quizFragen[raum].antwort === auswahl) {
-            quizPunkteNeu += quizFragen[raum].punkte;
+        const frageObjekt = quizFragen[raum];
+        const korrekt = frageObjekt.antwort === auswahl;
+
+        if (korrekt) {
+            quizPunkteNeu += frageObjekt.punkte;
         }
-        const korrekt = quizFragen[raum].antwort === auswahl;
-        await sendQuizAnswer(userId, raum, auswahl, korrekt);
+
+        await sendQuizAnswer(
+            userId,
+            raum,
+            auswahl,
+            korrekt ? frageObjekt.punkte : 0,
+            frageObjekt.frage,
+            frageObjekt.antwort
+        );
+
         beantworteteRäume.push(raum);
     }
 
@@ -231,7 +245,6 @@ export async function speicherePunkte(raum, auswahl) {
         punkte: quizPunkteNeu,
         beantworteteRäume: beantworteteRäume
     });
-
 }
 
 function schließeQuiz() {

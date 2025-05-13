@@ -30,25 +30,29 @@ export async function getUserData(userId) {
 
 
 
-export async function sendQuizAnswer(userId, raum, antwort, punkte) {
+// ✅ 1. sendQuizAnswer – jetzt mit expliziten Parametern
+export async function sendQuizAnswer(userId, raum, antwort, punkte, frage, richtigeAntwort) {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/quiz`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            userId,
-            raum: aktuellerRaum,
-            antwort: gegebeneAntwort,
-            punkte: punkte,
-            frage: aktuelleFrage.text,
-            richtige_antwort: aktuelleFrage.richtigeAntwort
-        })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");
-      console.log("✅ Antwort gespeichert:", data);
+        console.log("Sende Quizdaten:", { userId, raum, antwort, punkte, frage, richtigeAntwort });
+
+        const res = await fetch(`${BACKEND_URL}/api/quiz`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId,
+                raum,
+                antwort,
+                punkte,
+                frage,
+                richtige_antwort: richtigeAntwort
+            })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");
+        console.log("✅ Antwort gespeichert:", data);
     } catch (err) {
-      console.error("❌ Fehler beim Speichern der Antwort:", err);
+        console.error("❌ Fehler beim Speichern der Antwort:", err);
     }
 }
 
