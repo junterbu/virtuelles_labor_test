@@ -1,5 +1,6 @@
 import { solveLinearSystem, invertMatrix, multiplyMatrixVector } from "./Marshall.js";
 import { quizPunkte, quizFragen } from "./Marker.js";
+import { createClient } from '@supabase/supabase-js';
 
 
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
@@ -27,6 +28,11 @@ async function fetchQuizResults(userId) {
     }
 }
 
+const supabase = window.supabase.createClient(
+    "https://lmmsroxfumlwtveeimov.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbXNyb3hmdW1sd3R2ZWVpbW92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3OTExNTEsImV4cCI6MjA2MDM2NzE1MX0.3qPy7QeSh5HGJALzGheSy3Q58M5XhCwLuTdrmJRjJBM"
+);
+  
 // async function sendPDFByEmail(userId, pdfBlob) {
 //     const formData = new FormData();
 //     formData.append("userId", userId);
