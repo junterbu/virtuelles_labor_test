@@ -18,7 +18,7 @@ let animationMixer;
 let buttonOn; // Der Button aus der GLB-Datei
 let action; // Die Animation selbst
 let clock = new THREE.Clock(); // Uhr für präzise Delta-Zeit
-const FPS = 24; // Frame-Rate
+const FPS = 1; // Frame-Rate
 
 let probekörper; // Referenz auf das Objekt
 

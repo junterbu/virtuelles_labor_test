@@ -35,7 +35,14 @@ export async function sendQuizAnswer(userId, raum, antwort, punkte) {
       const res = await fetch(`${BACKEND_URL}/api/quiz`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, raum, antwort, punkte })
+        body: JSON.stringify({
+            userId,
+            raum: aktuellerRaum,
+            antwort: gegebeneAntwort,
+            punkte: punkte,
+            frage: aktuelleFrage.text,
+            richtige_antwort: aktuelleFrage.richtigeAntwort
+        })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");

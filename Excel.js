@@ -518,7 +518,7 @@ async function saveLaborResults(userId, optimalerBitumengehalt, maximaleRaumdich
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId, punkte, optimalerBitumengehalt, maximaleRaumdichte })
         });
-
+        
     } catch (error) {
         console.error("❌ Fehler beim Speichern der Labor-Ergebnisse:", error);
     }
