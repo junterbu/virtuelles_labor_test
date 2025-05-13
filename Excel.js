@@ -231,14 +231,14 @@ export async function generatePDFReportextern(mischgutName, eimerWerte, bitumeng
             q.punkte ?? 0
             ]);
 
-            doc.autoTable({
-            startY,
-            head: [quizHeaders],
-            body: quizData,
-            styles: { fontSize: 10 }
+            pdf.autoTable({
+                startY,
+                head: [quizHeaders],
+                body: quizData,
+                styles: { fontSize: 10 }
             });
         } else {
-            doc.text("Keine Quizdaten gefunden.", 14, startY + 10);
+            pdf.text("Keine Quizdaten gefunden.", 14, startY + 10);
         }
 
         startY = pdf.lastAutoTable.finalY + 10;
