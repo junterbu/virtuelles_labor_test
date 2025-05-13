@@ -60,7 +60,6 @@ export async function generatePDFReportextern(mischgutName, eimerWerte, bitumeng
     // Quiz-Punkte abrufen
     const quizPunkte = await fetchQuizPunkte(userId);
     const quizErgebnisse = await fetchQuizResults(userId);
-    console.log("Quizdaten:", quizErgebnisse);
 
     // Titel
     pdf.setFontSize(20);
@@ -494,15 +493,24 @@ export async function generatePDFReportintern(mischgutName, eimerWerte, bitumeng
         pdf.text("Quiz-Auswertung:", 10, startY);
         startY += 5;
 
-        const quizHeaders = ["Frage", "Antwort des Nutzers", "Richtige Antwort", "Punkte"];
-        const quizData = quizErgebnisse.map(q => [q.frage, q.gegebeneAntwort, q.richtigeAntwort, q.punkte]);
+        if (quizErgebnisse.length > 0) {
+            const quizHeaders = ["Frage", "Antwort", "Richtige Antwort", "Punkte"];
+            const quizData = quizErgebnisse.map(q => [
+            q.frage || "-", 
+            q.antwort || "-", 
+            q.richtige_antwort || "-", 
+            q.punkte ?? 0
+            ]);
 
-        pdf.autoTable({
-            startY,
-            head: [quizHeaders],
-            body: quizData,
-            styles: { fontSize: 10 }
-        });
+            pdf.autoTable({
+                startY,
+                head: [quizHeaders],
+                body: quizData,
+                styles: { fontSize: 10 }
+            });
+        } else {
+            pdf.text("Keine Quizdaten gefunden.", 14, startY + 10);
+        }
 
         startY = pdf.lastAutoTable.finalY + 10;
 
