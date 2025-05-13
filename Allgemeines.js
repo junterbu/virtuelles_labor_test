@@ -7,9 +7,17 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { camera, renderer} from "./View_functions.js";
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
-// const composer = new EffectComposer(renderer);
-// const renderPass = new RenderPass(scene, camera);
-// composer.addPass(renderPass);
+
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+document.body.appendChild(renderer.domElement);
+renderer.antialias = false;
+renderer.outputEncoding = THREE.sRGBEncoding; // Verbessert Farben ohne zusätzlichen Speicherbedarf
+renderer.shadowMap.enabled = false; // Nur aktivieren, wenn Schatten notwendig
+
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
 
 // Geräteerkennung
 export function isMobileDevice() {
@@ -76,19 +84,19 @@ scene.background = new THREE.Color(0x87ceeb); // Hellblauer Himmel
 
 
 
-// // // Bloom-Effekt hinzufügen
-// // const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-// // bloomPass.threshold = 0;
-// // bloomPass.strength = 1.5;
-// // bloomPass.radius = 0;
-// // composer.addPass(bloomPass);
+// // Bloom-Effekt hinzufügen
+// const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+// bloomPass.threshold = 0;
+// bloomPass.strength = 1.5;
+// bloomPass.radius = 0;
+// composer.addPass(bloomPass);
 
-// // Animation-Loop mit Composer
-// function animate_renderer() {
-//     requestAnimationFrame(animate_renderer);
-//     TWEEN.update(); // Tween-Animationen aktualisieren
-//     composer.render(); // Verwende Composer anstelle von renderer.render()
-// }
+// Animation-Loop mit Composer
+function animate_renderer() {
+    requestAnimationFrame(animate_renderer);
+    TWEEN.update(); // Tween-Animationen aktualisieren
+    composer.render(); // Verwende Composer anstelle von renderer.render()
+}
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -128,3 +136,5 @@ window.addEventListener('resize', () => {
 
 //     console.log("AR-Ansicht verlassen.");
 // }
+
+export {renderer}

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import {dirLight1 } from "./Allgemeines.js";
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';;
-import { isMobileDevice, scene } from './Allgemeines.js';
+import { isMobileDevice, scene, renderer } from './Allgemeines.js';
 import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js";
@@ -58,13 +58,6 @@ function handleMarkerClick(marker) {
         leaveView();
     } 
 }
-
-let renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
-document.body.appendChild(renderer.domElement);
-renderer.antialias = false;
-renderer.outputEncoding = THREE.sRGBEncoding; // Verbessert Farben ohne zusätzlichen Speicherbedarf
-renderer.shadowMap.enabled = false; // Nur aktivieren, wenn Schatten notwendig
 
 // WebXR-Button hinzufügen
 document.body.appendChild(VRButton.createButton(renderer));
@@ -539,4 +532,3 @@ onWindowResize();
 
 measureFrameRate();
 
-export {renderer}
