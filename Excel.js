@@ -1,7 +1,5 @@
 import { solveLinearSystem, invertMatrix, multiplyMatrixVector } from "./Marshall.js";
 import { quizPunkte, quizFragen } from "./Marker.js";
-import { createClient } from '@supabase/supabase-js';
-
 
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
 
