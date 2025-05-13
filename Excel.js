@@ -516,15 +516,53 @@ export async function generatePDFReportintern(mischgutName, eimerWerte, bitumeng
 
         pdf.text(`Gesamtpunkte: ${quizPunkte} / 70`, 10, startY);
 
-
-        // **📤 2. PDF speichern oder senden**
-        const pdfBlob = pdf.output("blob");
-
-        // Speichern in Firebase oder per E-Mail senden
-        // sendPDFByEmail(userId, pdfBlob);
-        saveLaborResults(userId, x_max, y_max);
+        (async () => {
+            try {
+              // 🔁 PDF als Blob erzeugen
+              const pdfBlob = pdf.output("blob");
+              const fileName = `bericht_${userId}_${Date.now()}.pdf`;
+          
+              // 📦 Hochladen in Supabase Storage
+              const { data, error } = await supabase.storage
+                .from("berichte") // Bucket-Name
+                .upload(fileName, pdfBlob, {
+                  contentType: "application/pdf",
+                  upsert: false
+                });
+          
+              if (error) {
+                console.error("❌ Fehler beim PDF-Upload:", error);
+              } else {
+                console.log("✅ PDF gespeichert:", data.path);
+          
+                // 📄 PDF-Link in SQL-Tabelle speichern
+                const publicUrl = supabase.storage.from("berichte").getPublicUrl(data.path).data.publicUrl;
+          
+                await fetch(`${BACKEND_URL}/api/internereports`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    user_id: userId,
+                    optimaler_bitumengehalt: parseFloat(x_max.toFixed(2)),
+                    maximale_raumdichte: parseFloat(y_max.toFixed(3)),
+                    mittelwerte_raumdichte: mittelwert,
+                    bitumenanteile: bitumengehalt.flat(),
+                    rohdichten: Rohdichten.flat(),
+                    gesamtpunkte: quizPunkte,
+                    pdf_url: publicUrl
+                  })
+                });
+          
+                console.log("📥 Metadaten und PDF-Link gespeichert.");
+              }
+            } catch (e) {
+              console.error("❌ Unerwarteter Fehler beim Speichern des PDFs:", e);
+            }
+          
+            // Abschließend: interne Verarbeitung
+            saveLaborResults(userId, x_max, y_max);
+          })();
     }, 500);
-
 }
 
 
