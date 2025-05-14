@@ -46,7 +46,8 @@ window.addEventListener(inputEvent, function (event) {
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(mouse, camera);
 
-    const intersects = raycaster.intersectObjects(activeMarkers, true);
+    const visibleMarkers = activeMarkers.filter(m => m.visible === true);
+    const intersects = raycaster.intersectObjects(visibleMarkers, false);
     if (intersects.length > 0) {
         const clickedMarker = intersects[0].object;
 
@@ -58,6 +59,7 @@ window.addEventListener(inputEvent, function (event) {
 });
 
 function handleMarkerClick(marker) {
+    if (!marker.visible) return;
     if (marker === lagerMarker) {
         goToLager();
     } else if (marker === proberaumlagerMarker && currentRoom == "Gesteinsraum") {

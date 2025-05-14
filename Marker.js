@@ -47,11 +47,6 @@ export const leaveMarshall = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", 
 export let markers = [lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, leavelagerMarker, leaveMischraum, toMarshallMarker, leaveMarshall];  // Die Marker-Objekte
 export let activeMarkers = [lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, leavelagerMarker, leaveMischraum, toMarshallMarker, leaveMarshall];  // Die aktiven Marker (wird leer sein, wenn in einem Viewpoint)
 
-lagerMarker.userData.isMarker = true;
-lagerMarker.userData.onClick = () => {
-    goToLager();
-};
-
 lagerproberaumMarker.visible = false;
 toMarshallMarker.visible = false;
 
