@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { camera} from "./View_functions.js";
+import { camera } from "./View_functions.js";
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
 
@@ -15,9 +15,7 @@ renderer.antialias = false;
 renderer.outputEncoding = THREE.sRGBEncoding; // Verbessert Farben ohne zusätzlichen Speicherbedarf
 renderer.shadowMap.enabled = false; // Nur aktivieren, wenn Schatten notwendig
 
-const composer = new EffectComposer(renderer);
-const renderPass = new RenderPass(scene, camera);
-composer.addPass(renderPass);
+
 
 // Geräteerkennung
 export function isMobileDevice() {
@@ -82,7 +80,9 @@ scene.add(pointLight);
 
 scene.background = new THREE.Color(0x87ceeb); // Hellblauer Himmel
 
-
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
 
 // // Bloom-Effekt hinzufügen
 // const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
