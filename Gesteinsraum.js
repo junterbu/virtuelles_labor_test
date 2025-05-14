@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import {scene} from "./Allgemeines.js"
 import {schildchenProberaum} from "./Lager.js";
-import {goToMischraum, camera, currentRoom} from "./View_functions.js";
+import {goToMischraum, currentRoom} from "./View_functions.js";
 import {toMischraumMarker} from "./Marker.js";
-import { isMobileDevice } from './Allgemeines.js';
+import { isMobileDevice, camera } from './Allgemeines.js';
 
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
 export let canvasSieblinie

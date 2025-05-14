@@ -1,11 +1,10 @@
 // Marshall.js
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { scene } from './Allgemeines.js';
-import { renderer, camera } from './View_functions.js';
+import { scene, isMobileDevice, camera } from './Allgemeines.js';
+import { renderer } from './View_functions.js';
 import { Rohdichten, bitumenAnteil, bitumengehalt, dichteBitumen } from './Mischraum.js';
 import { canvasSieblinie, eimerWerte, selectedMix } from './Gesteinsraum.js';
-import { isMobileDevice } from './Allgemeines.js';
 import { generatePDFReportintern, generatePDFReportextern } from './Excel.js';
 import { zeigeQuiz } from './Marker.js';
 import { getUserQuizFragen, getNextTwoQuestions } from './main.js';
