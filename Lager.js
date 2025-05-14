@@ -1,8 +1,8 @@
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import * as THREE from "three";
-import {scene} from "./Allgemeines.js"
-import {camera, currentRoom} from "./View_functions.js";
+import {scene, camera} from "./Allgemeines.js"
+import {currentRoom} from "./View_functions.js";
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import {lagerproberaumMarker} from "./Marker.js";
 import { isMobileDevice } from './Allgemeines.js';
