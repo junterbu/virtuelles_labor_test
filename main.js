@@ -179,38 +179,39 @@ window.addEventListener('roomChanged', (e) => {
 });
 
 let isDragging = false;
-let mouseDownPosition = new THREE.Vector2();
+let mouseDownPos = new THREE.Vector2();
 
 window.addEventListener('mousedown', (event) => {
     isDragging = false;
-    mouseDownPosition.set(event.clientX, event.clientY);
+    mouseDownPos.set(event.clientX, event.clientY);
 });
 
 window.addEventListener('mousemove', (event) => {
-    const dx = event.clientX - mouseDownPosition.x;
-    const dy = event.clientY - mouseDownPosition.y;
-    if (Math.sqrt(dx * dx + dy * dy) > 5) {
+    const dx = event.clientX - mouseDownPos.x;
+    const dy = event.clientY - mouseDownPos.y;
+    if (Math.sqrt(dx * dx + dy * dy) > 3) {
         isDragging = true;
     }
 });
 
-window.addEventListener('click', (event) => {
-    if (isDragging) return; // ignorieren, wenn gezogen wurde
+window.addEventListener('mouseup', (event) => {
+    if (isDragging) return;
 
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
 
     const intersects = raycaster.intersectObjects(scene.children, true);
-    
+
     for (let i = 0; i < intersects.length; i++) {
         const obj = intersects[i].object;
 
-        // ✅ Sichtbarkeit prüfen
-        if (obj.visible && obj.userData.isMarker) {
-            if (typeof obj.userData.onClick === 'function') {
-                obj.userData.onClick(); // oder deine Marker-Logik
-            }
+        // Wichtig: unsichtbare Marker ignorieren
+        if (!obj.visible) continue;
+
+        // Marker nur handeln, wenn explizit gekennzeichnet
+        if (obj.userData?.isMarker && typeof obj.userData.onClick === 'function') {
+            obj.userData.onClick();
             break;
         }
     }
