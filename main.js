@@ -2,6 +2,7 @@ import { fromLagertoProberaum, goToLager, goToMischraum, toMarshall } from './Vi
 import * as THREE from 'three';
 
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
+let mouse = new THREE.Vector2();
 
 async function sendDataToServer(userId, data) {
     const response = await fetch(`${BACKEND_URL}/api/data`, {
@@ -190,7 +191,7 @@ window.addEventListener('mousemove', (event) => {
 });
 
 window.addEventListener('click', (event) => {
-    if (isDragging) return; // 🛑 ignorieren, wenn gezogen wurde
+    if (isDragging) return; // ignorieren, wenn gezogen wurde
 
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
