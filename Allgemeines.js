@@ -22,8 +22,6 @@ export function isMobileDevice() {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isMobile = /Android|iPhone|iPod/i.test(userAgent) || 
                      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
-    console.log(isMobile ? "Mobiles Gerät erkannt." : "Desktop-Gerät erkannt.");
     return isMobile;
 }
 // export function isIOSDevice() {
