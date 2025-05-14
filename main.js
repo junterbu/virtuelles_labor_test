@@ -3,10 +3,10 @@ import * as THREE from 'three';
 import { camera, scene } from './Allgemeines.js';
 
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
-let mouse = new THREE.Vector2();
+export let mouse = new THREE.Vector2();
 
 // Raycaster und Mauskoordinaten definieren
-let raycaster = new THREE.Raycaster();
+export let raycaster = new THREE.Raycaster();
 
 async function sendDataToServer(userId, data) {
     const response = await fetch(`${BACKEND_URL}/api/data`, {
