@@ -117,27 +117,32 @@ export async function getNextQuestions(userId) {
     }
 }
 
-function markVisited(room) {
-    visitedRooms.add(room);
-    steps.forEach(step => {
-        if (visitedRooms.has(step.dataset.room)) {
+const progressSteps = document.querySelectorAll('#progressBar .step');
+const unlockedRooms = new Set(['Lager']); // nur Lager ist anfangs sichtbar
+
+// Initialanzeige: nur Lager
+progressSteps.forEach(step => {
+    if (!unlockedRooms.has(step.dataset.room)) {
+        step.style.display = 'none';
+    }
+});
+
+function unlockRoom(room) {
+    if (!unlockedRooms.has(room)) {
+        unlockedRooms.add(room);
+        const step = document.querySelector(`.step[data-room="${room}"]`);
+        if (step) step.style.display = 'block';
+    }
+
+    // Markiere besuchte Räume visuell
+    progressSteps.forEach(step => {
+        if (unlockedRooms.has(step.dataset.room)) {
             step.classList.add('visited');
         }
     });
 }
 
-// Raumwechsel bei Klick
-steps.forEach(step => {
-    step.addEventListener('click', () => {
-        const room = step.dataset.room;
-        if (room === "Lager") goToLager();
-        else if (room === "Gesteinsraum") fromLagertoProberaum(); // Annahme: von Proberaum zum Gesteinsraum
-        else if (room === "Mischraum") goToMischraum();
-        else if (room === "Marshall") toMarshall();
-    });
-});
-
-// Beispiel: Raumwechselhaken setzen (in jeder View-Funktion einbauen)
+// Auf Raumwechsel reagieren
 window.addEventListener('roomChanged', (e) => {
-    markVisited(e.detail);
+    unlockRoom(e.detail);
 });
