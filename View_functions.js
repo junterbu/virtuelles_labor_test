@@ -13,29 +13,47 @@ const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
 leaveMischraum.visible = false;
 leaveMarshall.visible = false;
 
+let isDragging = false;
+let mouseDownPos = new THREE.Vector2();
+
+window.addEventListener('mousedown', (e) => {
+    isDragging = false;
+    mouseDownPos.set(e.clientX, e.clientY);
+});
+
+window.addEventListener('mousemove', (e) => {
+    const dx = e.clientX - mouseDownPos.x;
+    const dy = e.clientY - mouseDownPos.y;
+    if (Math.sqrt(dx * dx + dy * dy) > 5) {
+        isDragging = true;
+    }
+});
+
 window.addEventListener(inputEvent, function (event) {
+    if (isDragging) return;
+
     const mouse = new THREE.Vector2();
 
     if (inputEvent === 'touchstart') {
-        // Touch-Eingabe verarbeiten
         const touch = event.touches[0];
         mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
     } else {
-        // Maus-Eingabe verarbeiten
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     }
 
-    // Raycaster einstellen
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(mouse, camera);
 
-    // Marker überprüfen
-    const intersects = raycaster.intersectObjects(activeMarkers);
+    const intersects = raycaster.intersectObjects(activeMarkers, true);
     if (intersects.length > 0) {
         const clickedMarker = intersects[0].object;
-        handleMarkerClick(clickedMarker);
+
+        //  Sichtbarkeit prüfen
+        if (clickedMarker.visible) {
+            handleMarkerClick(clickedMarker);
+        }
     }
 });
 
