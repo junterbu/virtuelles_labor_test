@@ -4,6 +4,9 @@ import * as THREE from 'three';
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
 let mouse = new THREE.Vector2();
 
+// Raycaster und Mauskoordinaten definieren
+let raycaster = new THREE.Raycaster();
+
 async function sendDataToServer(userId, data) {
     const response = await fetch(`${BACKEND_URL}/api/data`, {
         method: "POST",
