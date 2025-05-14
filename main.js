@@ -1,5 +1,6 @@
 import { fromLagertoProberaum, goToLager, goToMischraum, toMarshall } from './View_functions.js';
 import * as THREE from 'three';
+import { camera } from './Allgemeines.js';
 
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
 let mouse = new THREE.Vector2();
