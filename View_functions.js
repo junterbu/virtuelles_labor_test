@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import {dirLight1 } from "./Allgemeines.js";
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';;
 import { isMobileDevice, scene, renderer } from './Allgemeines.js';
 import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js";
 import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions } from "./main.js";
+import {dirLight1, camera } from "./Allgemeines.js";
 // Bestimmen Sie das Event basierend auf dem Gerät
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
 
@@ -92,8 +92,7 @@ export function startARView() {
 //     </a-scene>`;
 // }
 
-export let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(20, 20, 5);
+
 
 export function animateCamera(targetPosition, targetLookAt) {
     const startPosition = camera.position.clone();

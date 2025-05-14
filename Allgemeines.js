@@ -4,7 +4,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { camera } from "./View_functions.js";
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
 
@@ -15,7 +14,8 @@ renderer.antialias = false;
 renderer.outputEncoding = THREE.sRGBEncoding; // Verbessert Farben ohne zusätzlichen Speicherbedarf
 renderer.shadowMap.enabled = false; // Nur aktivieren, wenn Schatten notwendig
 
-
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(20, 20, 5);
 
 // Geräteerkennung
 export function isMobileDevice() {
@@ -137,4 +137,4 @@ window.addEventListener('resize', () => {
 //     console.log("AR-Ansicht verlassen.");
 // }
 
-export {renderer}
+export {renderer, camera}
