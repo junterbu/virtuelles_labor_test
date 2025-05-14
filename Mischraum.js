@@ -1,7 +1,6 @@
 import * as THREE from "three";
-import {camera} from "./View_functions.js";
 import {loader} from "./Lager.js";
-import {scene} from "./Allgemeines.js";
+import {scene, camera} from "./Allgemeines.js";
 import {eimerWerte} from "./Gesteinsraum.js";
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
