@@ -1,4 +1,5 @@
 import { fromLagertoProberaum, goToLager, goToMischraum, toMarshall } from './View_functions.js';
+import * as THREE from 'three';
 
 const BACKEND_URL = "https://backend-test-phase.vercel.app";
 
@@ -170,4 +171,42 @@ window.addEventListener('roomChanged', (e) => {
 // Beispiel: Raumwechselhaken setzen (in jeder View-Funktion einbauen)
 window.addEventListener('roomChanged', (e) => {
     markVisited(e.detail);
+});
+
+let isDragging = false;
+let mouseDownPosition = new THREE.Vector2();
+
+window.addEventListener('mousedown', (event) => {
+    isDragging = false;
+    mouseDownPosition.set(event.clientX, event.clientY);
+});
+
+window.addEventListener('mousemove', (event) => {
+    const dx = event.clientX - mouseDownPosition.x;
+    const dy = event.clientY - mouseDownPosition.y;
+    if (Math.sqrt(dx * dx + dy * dy) > 5) {
+        isDragging = true;
+    }
+});
+
+window.addEventListener('click', (event) => {
+    if (isDragging) return; // 🛑 ignorieren, wenn gezogen wurde
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    
+    for (let i = 0; i < intersects.length; i++) {
+        const obj = intersects[i].object;
+
+        // ✅ Sichtbarkeit prüfen
+        if (obj.visible && obj.userData.isMarker) {
+            if (typeof obj.userData.onClick === 'function') {
+                obj.userData.onClick(); // oder deine Marker-Logik
+            }
+            break;
+        }
+    }
 });
