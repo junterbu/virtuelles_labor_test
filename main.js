@@ -117,6 +117,26 @@ export async function getNextQuestions(userId) {
     }
 }
 
+function markVisited(room) {
+    visitedRooms.add(room);
+    steps.forEach(step => {
+        if (visitedRooms.has(step.dataset.room)) {
+            step.classList.add('visited');
+        }
+    });
+}
+
+// Raumwechsel bei Klick
+steps.forEach(step => {
+    step.addEventListener('click', () => {
+        const room = step.dataset.room;
+        if (room === "Lager") goToLager();
+        else if (room === "Gesteinsraum") fromLagertoProberaum(); // Annahme: von Proberaum zum Gesteinsraum
+        else if (room === "Mischraum") goToMischraum();
+        else if (room === "Marshall") toMarshall();
+    });
+});
+
 const progressSteps = document.querySelectorAll('#progressBar .step');
 const unlockedRooms = new Set(['Lager']); // nur Lager ist anfangs sichtbar
 
@@ -145,4 +165,9 @@ function unlockRoom(room) {
 // Auf Raumwechsel reagieren
 window.addEventListener('roomChanged', (e) => {
     unlockRoom(e.detail);
+});
+
+// Beispiel: Raumwechselhaken setzen (in jeder View-Funktion einbauen)
+window.addEventListener('roomChanged', (e) => {
+    markVisited(e.detail);
 });
