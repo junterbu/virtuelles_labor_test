@@ -1,8 +1,7 @@
 // Marshall.js
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { scene, isMobileDevice, camera } from './Allgemeines.js';
-import { renderer } from './View_functions.js';
+import { scene, isMobileDevice, camera, renderer } from './Allgemeines.js';
 import { Rohdichten, bitumenAnteil, bitumengehalt, dichteBitumen } from './Mischraum.js';
 import { canvasSieblinie, eimerWerte, selectedMix } from './Gesteinsraum.js';
 import { generatePDFReportintern, generatePDFReportextern } from './Excel.js';

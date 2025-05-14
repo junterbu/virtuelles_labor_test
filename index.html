@@ -294,13 +294,11 @@
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
         import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
         import * as THREE from "three";
+        import {scene, camera, renderer, isMobileDevice} from "./Allgemeines.js"
         import {lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
-        import {goToLager, fromLagertoProberaum, goToMischraum, leaveView, camera, controls, renderer, toMarshall, fromProberaumtoLager} from "./View_functions.js";
+        import {goToLager, fromLagertoProberaum, goToMischraum, leaveView, controls, toMarshall, fromProberaumtoLager, startARView} from "./View_functions.js";
         import {proberaumPositionen, schildchen, eimerMeshes, eimerPositionen, createEimerLabel, loader} from "./Lager.js";
-        import {scene} from "./Allgemeines.js"
         import {eimerWerte} from "./Gesteinsraum.js"
-        import { isMobileDevice } from './Allgemeines.js';
-        import { startARView } from './View_functions.js';
 
 
         // // Button nur anzeigen, wenn ein mobiles Gerät erkannt wird
