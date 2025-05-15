@@ -551,12 +551,12 @@ onWindowResize();
 measureFrameRate();
 
 function jumpToLager() {
-        currentRoom = "Lager";
+    currentRoom = "Lager";
     // Zielposition und LookAt-Werte definieren
     const targetPosition = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z);
     const targetLookAt = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z + 0.1);
 
-    camera.position(targetPosition)
+    camera.position.set(targetPosition)
     camera.lookAt(targetLookAt)
     // Setze den Drehpunkt (target) auf die gewünschte Position
     controls.target.set(targetLookAt.x, targetLookAt.y, targetLookAt.z);
