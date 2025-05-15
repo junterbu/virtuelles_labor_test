@@ -578,15 +578,39 @@ function jumpToLager() {
     window.dispatchEvent(event);
 }
 
+
+function jumpToGesteinsraum() {
+    currentRoom = "Gesteinsraum";
+    // Zielposition und LookAt-Werte definieren
+
+    camera.position.set(THREE.Vector3(5, 1.5, -15))
+    camera.lookAt(THREE.Vector3(5, 1.5, -15.1))
+    // Setze den Drehpunkt (target) auf die gewünschte Position
+    controls.target.set(THREE.Vector3(5, 1.5, -15.1));
+    controls.update();
+
+    // Erlaube nur Rotation, kein Zoom
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = true;
+    // if (isMobileDevice()) {
+    //     exitARView();
+    // }
+    // Blende den `uiContainer`-Schieberegler aus
+    document.getElementById('uiContainer').style.display = 'none';
+    leaveproberaumMarker.visible = true;
+    proberaumlagerMarker.visible = true;
+
+    const event = new CustomEvent('roomChanged', { detail: 'Lager' });
+    window.dispatchEvent(event);
+}
+
 window.addEventListener("keydown", function(event) {
     if (event.key === "l" || event.key === "L") {
         jumpToLager();
     }
-    // if (event.key === "p" || event.key === "P") {
-    //     jumpToProberaum(); // musst du definieren
-    // }
-    // if (event.key === "g" || event.key === "G") {
-    //     jumpToGesteinsraum(); // ebenfalls definieren
-    // }
+    if (event.key === "g" || event.key === "G") {
+        jumpToGesteinsraum(); // ebenfalls definieren
+    }
     // usw.
 });
