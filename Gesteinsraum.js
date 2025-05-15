@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import {scene} from "./Allgemeines.js"
 import {schildchenProberaum} from "./Lager.js";
-import {goToMischraum, currentRoom} from "./View_functions.js";
+import {goToMischraum, currentRoom } from "./View_functions.js";
 import {toMischraumMarker} from "./Marker.js";
 import { isMobileDevice, camera } from './Allgemeines.js';
 
@@ -452,7 +452,25 @@ function SieblinienGrenzanalyse(sieblinie) {
     return true; // Sieblinie liegt innerhalb der Grenzen
 }
 
+let isDragging = false;
+let mouseDownPos = new THREE.Vector2();
+
+window.addEventListener('mousedown', (e) => {
+    isDragging = false;
+    mouseDownPos.set(e.clientX, e.clientY);
+});
+
+window.addEventListener('mousemove', (e) => {
+    const dx = e.clientX - mouseDownPos.x;
+    const dy = e.clientY - mouseDownPos.y;
+    if (Math.sqrt(dx * dx + dy * dy) > 5) {
+        isDragging = true;
+    }
+});
+
 window.addEventListener(inputEvent, function(event) {
+    if (isDragging) return; // Verhindere Raumwechsel bei Drag
+
     const mouse = new THREE.Vector2();
     if (inputEvent === 'touchstart') {
         const touch = event.touches[0];
@@ -465,12 +483,9 @@ window.addEventListener(inputEvent, function(event) {
 
     raycaster.setFromCamera(mouse, camera);
 
-    // Prüfen, ob der Raycaster den Raumwechsel-Marker trifft
-    let intersects = raycaster.intersectObjects([toMischraumMarker]);
-
+    const intersects = raycaster.intersectObjects([toMischraumMarker]);
     if (intersects.length > 0 && intersects[0].object === toMischraumMarker) {
-        // toMischraum ausführen, z.B.:
-        goToMischraum(); // nach Raumziel
+        goToMischraum();
     }
 });
 // Canvas für den Text erstellen
