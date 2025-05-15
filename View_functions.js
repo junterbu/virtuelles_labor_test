@@ -5,7 +5,7 @@ import { isMobileDevice, scene, renderer } from './Allgemeines.js';
 import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js";
-import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions } from "./main.js";
+import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions, getVisibleIntersects } from "./main.js";
 import {dirLight1, camera } from "./Allgemeines.js";
 // Bestimmen Sie das Event basierend auf dem Gerät
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
@@ -47,7 +47,7 @@ window.addEventListener(inputEvent, function (event) {
     raycaster.setFromCamera(mouse, camera);
 
     const visibleMarkers = activeMarkers.filter(m => m.visible === true);
-    const intersects = raycaster.intersectObjects(visibleMarkers, false);
+    const intersects = getVisibleIntersects(raycaster, visibleMarkers);
     if (intersects.length > 0) {
         const clickedMarker = intersects[0].object;
 

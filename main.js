@@ -216,3 +216,8 @@ window.addEventListener('mouseup', (event) => {
         }
     }
 });
+
+export function getVisibleIntersects(raycaster, objects) {
+    const visibleObjects = objects.filter(obj => obj.visible);
+    return raycaster.intersectObjects(visibleObjects, false);
+}
