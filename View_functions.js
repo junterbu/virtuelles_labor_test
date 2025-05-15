@@ -602,8 +602,38 @@ function jumpToGesteinsraum() {
     document.getElementById('uiContainer').style.display = 'none';
     leaveproberaumMarker.visible = true;
     proberaumlagerMarker.visible = true;
+    
 
-    const event = new CustomEvent('roomChanged', { detail: 'Lager' });
+    const event = new CustomEvent('roomChanged', { detail: 'Gesteinsraum' });
+    window.dispatchEvent(event);
+}
+
+function jumpToMischraum() {
+    currentRoom = "Gesteinsraum";
+    // Zielposition und LookAt-Werte definieren
+    const targetPosition = new THREE.Vector3(-8, 1.5, 7); // Neue Zielposition
+    const targetLookAt = new THREE.Vector3(-8.5, 1.5, 6); // Zielblickpunkt im Mischraum
+
+    camera.position.set(targetPosition.x, targetPosition.y, targetPosition.z)
+    camera.lookAt(targetLookAt.x, targetLookAt.y, targetLookAt.z)
+    // Setze den Drehpunkt (target) auf die gewünschte Position
+    controls.target.set(targetLookAt.x, targetLookAt.y, targetLookAt.z);
+    controls.update();
+
+    // Erlaube nur Rotation, kein Zoom
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = true;
+
+    // Blende den `uiContainer`-Schieberegler aus
+    leaveMischraum.visible = true;
+    document.getElementById('bitumenUI').style.display = 'block';
+    leaveMarshall.visible = false;
+
+    // Schieberegler einblenden (optional)
+    document.getElementById('uiContainer').style.display = 'none';
+
+    const event = new CustomEvent('roomChanged', { detail: 'Mischraum' });
     window.dispatchEvent(event);
 }
 
@@ -613,6 +643,9 @@ window.addEventListener("keydown", function(event) {
     }
     if (event.key === "g" || event.key === "G") {
         jumpToGesteinsraum(); // ebenfalls definieren
+    }
+    if (event.key === "m" || event.key === "M") {
+        jumpToMischraum(); // ebenfalls definieren
     }
     // usw.
 });
