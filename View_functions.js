@@ -550,3 +550,24 @@ onWindowResize();
 
 measureFrameRate();
 
+function jumpToLager() {
+    controls.enabled = false;
+    camera.position.set(-12.5, 1.5, 4); // Endposition von goToLager()
+    camera.rotation.set(-12.5, 1.5, 4.1);    // Endrotation von goToLager()
+    currentRoom = "Lager";
+    updateVisibleMarkers();
+    controls.enabled = true;
+}
+
+window.addEventListener("keydown", function(event) {
+    if (event.key === "l" || event.key === "L") {
+        jumpToLager();
+    }
+    // if (event.key === "p" || event.key === "P") {
+    //     jumpToProberaum(); // musst du definieren
+    // }
+    // if (event.key === "g" || event.key === "G") {
+    //     jumpToGesteinsraum(); // ebenfalls definieren
+    // }
+    // usw.
+});
