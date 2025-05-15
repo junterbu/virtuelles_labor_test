@@ -637,6 +637,8 @@ function jumpToMischraum() {
     window.dispatchEvent(event);
 }
 
+
+
 window.addEventListener("keydown", function(event) {
     if (event.key === "l" || event.key === "L") {
         jumpToLager();
@@ -647,5 +649,6 @@ window.addEventListener("keydown", function(event) {
     if (event.key === "m" || event.key === "M") {
         jumpToMischraum(); // ebenfalls definieren
     }
-    // usw.
 });
+
+export { jumpToGesteinsraum, jumpToMischraum }

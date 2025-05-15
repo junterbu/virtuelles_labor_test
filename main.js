@@ -1,4 +1,4 @@
-import { fromLagertoProberaum, goToLager, goToMischraum, toMarshall } from './View_functions.js';
+import { fromLagertoProberaum, goToLager, goToMischraum, toMarshall, jumpToGesteinsraum, jumpToMischraum } from './View_functions.js';
 import * as THREE from 'three';
 import { camera, scene } from './Allgemeines.js';
 
@@ -137,8 +137,8 @@ steps.forEach(step => {
     step.addEventListener('click', () => {
         const room = step.dataset.room;
         if (room === "Lager") goToLager();
-        else if (room === "Gesteinsraum") fromLagertoProberaum(); // Annahme: von Proberaum zum Gesteinsraum
-        else if (room === "Mischraum") goToMischraum();
+        else if (room === "Gesteinsraum") jumpToGesteinsraum(); // Annahme: von Proberaum zum Gesteinsraum
+        else if (room === "Mischraum") jumpToMischraum();
         else if (room === "Marshall") toMarshall();
     });
 });
