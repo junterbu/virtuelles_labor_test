@@ -82,7 +82,6 @@ function loadMarshallModel() {
                         const bitumenValues = bitumengehalt; // Ersetze mit deinem Mechanismus
 
                         if (intersects.length > 0) {
-                            console.log(baseValue)
                             if (baseValue === 0) {
                                 alert("Bitte wähle ein Gestein aus.");
                                 return;

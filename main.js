@@ -44,8 +44,6 @@ export async function getUserData(userId) {
 // ✅ 1. sendQuizAnswer – jetzt mit expliziten Parametern
 export async function sendQuizAnswer(userId, raum, antwort, punkte, frage, richtigeAntwort) {
     try {
-        console.log("Sende Quizdaten:", { userId, raum, antwort, punkte, frage, richtigeAntwort });
-
         const res = await fetch(`${BACKEND_URL}/api/quiz`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -61,7 +59,6 @@ export async function sendQuizAnswer(userId, raum, antwort, punkte, frage, richt
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");
-        console.log("✅ Antwort gespeichert:", data);
     } catch (err) {
         console.error("❌ Fehler beim Speichern der Antwort:", err);
     }

@@ -144,9 +144,7 @@ function setUserId() {
 
     localStorage.setItem("userId", userId);
     document.getElementById("userIdContainer").style.display = "none"; // Eingabemaske ausblenden
-    getUserData(userId).then(data => {
-        console.log("✅ Benutzerdaten vom Backend:", data);
-    });
+    getUserData(userId)
 }
 
 let beantworteteRäume = new Set();

@@ -18,7 +18,6 @@ async function fetchQuizResults(userId) {
     try {
         const response = await fetch(`${BACKEND_URL}/api/quizErgebnisse/${userId}`);
         const data = await response.json();
-        console.log(data.ergebnisse)
         return data || [];
     } catch (error) {
         console.error("Fehler beim Abrufen der Quiz-Ergebnisse:", error);
@@ -537,7 +536,6 @@ export async function generatePDFReportintern(mischgutName, eimerWerte, bitumeng
               if (error) {
                 console.error("❌ Fehler beim PDF-Upload:", error);
               } else {
-                console.log("✅ PDF gespeichert:", data.path);
           
                 // 📄 PDF-Link in SQL-Tabelle speichern
                 const publicUrl = supabase.storage.from("berichte").getPublicUrl(data.path).data.publicUrl;
@@ -557,7 +555,6 @@ export async function generatePDFReportintern(mischgutName, eimerWerte, bitumeng
                   })
                 });
           
-                console.log("📥 Metadaten und PDF-Link gespeichert.");
               }
             } catch (e) {
               console.error("❌ Unerwarteter Fehler beim Speichern des PDFs:", e);
