@@ -147,6 +147,11 @@ function setUserId() {
         return;
     }
 
+    if (userId.length < 8) {
+        alert("Bitte eine gültige Matrikelnummer eingeben.");
+        return;
+    }
+
     localStorage.setItem("userId", userId);
     document.getElementById("userIdContainer").style.display = "none"; // Eingabemaske ausblenden
     getUserData(userId)
