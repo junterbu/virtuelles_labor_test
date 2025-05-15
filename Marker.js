@@ -19,7 +19,7 @@ function createMarker(h, b, pxx, pxz, text, x, y, z, r, color) {
     canvas.height = pxz;
     const context = canvas.getContext('2d');
     context.font = '50px Arial';
-    context.fillStyle = 'white';
+    context.fillStyle = 'blue';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(text, canvas.width / 2, canvas.height / 2);
@@ -33,7 +33,7 @@ function createMarker(h, b, pxx, pxz, text, x, y, z, r, color) {
 }
 
 export const proberaumlagerMarker = createMarker(0.5, 1, 256, 128, "zum Lager", 4, 1.5, -10, 1, 0xbebdb8);
-export const lagerMarker = createMarker(2.5, 5, 256, 128, "Start", -12, 10, 4, 0, 0x0000ff);
+export const lagerMarker = createMarker(2.5, 5, 256, 128, "Start", -12, 10, 4, 0, 0xbebdb8);
 // export const proberaumMarker = createMarker(1, 2, 256, 128, "Proberaum", 6.3, 10, -15, 0);
 export const leavelagerMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", -12.5, 1.5, -2, 0, 0xbebdb8);
 export const leaveproberaumMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", 2, 1.5, -10, 1, 0xbebdb8);
