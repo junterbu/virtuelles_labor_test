@@ -551,12 +551,31 @@ onWindowResize();
 measureFrameRate();
 
 function jumpToLager() {
-    controls.enabled = false;
-    camera.position.set(-12.5, 1.5, 4); // Endposition von goToLager()
-    camera.rotation.set(-12.5, 1.5, 4.1);    // Endrotation von goToLager()
-    currentRoom = "Lager";
-    updateVisibleMarkers();
-    controls.enabled = true;
+        currentRoom = "Lager";
+    // Zielposition und LookAt-Werte definieren
+    const targetPosition = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z);
+    const targetLookAt = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z + 0.1);
+
+    camera.position(targetPosition)
+    camera.lookAt(targetLookAt)
+    // Setze den Drehpunkt (target) auf die gewünschte Position
+    controls.target.set(targetLookAt.x, targetLookAt.y, targetLookAt.z);
+    controls.update();
+
+    // Erlaube nur Rotation, kein Zoom
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = true;
+    // if (isMobileDevice()) {
+    //     exitARView();
+    // }
+    // Blende den `uiContainer`-Schieberegler aus
+    document.getElementById('uiContainer').style.display = 'none';
+    leaveMischraum.visible = false;
+    leaveMarshall.visible = false;
+
+    const event = new CustomEvent('roomChanged', { detail: 'Lager' });
+    window.dispatchEvent(event);
 }
 
 window.addEventListener("keydown", function(event) {
