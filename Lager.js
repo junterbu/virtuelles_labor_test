@@ -8,6 +8,7 @@ import {lagerproberaumMarker} from "./Marker.js";
 import { isMobileDevice } from './Allgemeines.js';
 
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
+lagerproberaumMarker.visible = false;
 
 // Erstellen einer Instanz des DRACOLoaders
 const dracoLoader = new DRACOLoader();
@@ -187,6 +188,7 @@ function moveToProberaum(eimerIndex, clickedLabel) {
 
     // Anleitung unsichtbar machen
     anleitungMesh.visible = false;
+    lagerproberaumMarker.visible = true;
 
     // Proberaum Marker sichtbar machen
     lagerproberaumMarker.visible = true;     
