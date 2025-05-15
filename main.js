@@ -218,3 +218,22 @@ export function getVisibleIntersects(raycaster, objects) {
     const visibleObjects = objects.filter(obj => obj.visible);
     return raycaster.intersectObjects(visibleObjects, false);
 }
+
+function startExperience() {
+    const anleitung = document.getElementById("AnleitungContainer");
+    const userInput = document.getElementById("userIdContainer");
+
+    // Anleitung sanft ausblenden
+    anleitung.classList.remove("fade-in");
+    anleitung.classList.add("fade-out");
+
+    // Nach der Übergangszeit (500ms), Anleitung ausblenden und Eingabe anzeigen
+    setTimeout(() => {
+        anleitung.style.display = "none";
+        userInput.style.display = "block";
+        userInput.classList.remove("fade-out");
+        userInput.classList.add("fade-in");
+    }, 500);
+}
+
+window.anleitung = startExperience;

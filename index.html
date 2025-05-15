@@ -207,6 +207,17 @@
             background-color: #dbeafe;
             font-weight: bold;
         }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .fade-in {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
     </style>
 </head>
 
@@ -251,8 +262,16 @@
         <p id="quizFrage"></p>
         <div id="quizOptionen"></div>
     </div>
-
-    <div id="userIdContainer" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    <div id="AnleitungContainer" class="fade-in" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        text-align: center; font-family: 'Arial', sans-serif;">
+        <p style="font-size: 16px; font-weight: bold; color: #333;">Willkommen im virtuellen Labor. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+        <br><br>
+        <button onclick="startExperience()" 
+            style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;
+            cursor: pointer; font-size: 16px;">Start</button>
+    </div>
+    <div id="userIdContainer" class="fade-in" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
         text-align: center; font-family: 'Arial', sans-serif;">
         <p style="font-size: 16px; font-weight: bold; color: #333;">Bitte deine Matrikelnummer eingeben:</p>
