@@ -168,7 +168,6 @@ export function goToLager() {
     document.getElementById('uiContainer').style.display = 'none';
     leaveMischraum.visible = false;
     leaveMarshall.visible = false;
-    lagerproberaumMarker.visible = true; 
 
     const event = new CustomEvent('roomChanged', { detail: 'Lager' });
     window.dispatchEvent(event);
