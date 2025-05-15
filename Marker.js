@@ -142,7 +142,7 @@ function setUserId() {
         return;
     }
 
-    if (length(userId) > 8) {
+    if (userId.length > 8) {
         alert("Bitte eine gültige Matrikelnummer eingeben.");
         return;
     }
