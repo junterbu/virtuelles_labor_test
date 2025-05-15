@@ -582,11 +582,13 @@ function jumpToLager() {
 function jumpToGesteinsraum() {
     currentRoom = "Gesteinsraum";
     // Zielposition und LookAt-Werte definieren
+    const targetPosition = new THREE.Vector3(5, 1.5, -15);
+    const targetLookAt = new THREE.Vector3(5, 1.5, -15.1);
 
-    camera.position.set(THREE.Vector3(5, 1.5, -15))
-    camera.lookAt(THREE.Vector3(5, 1.5, -15.1))
+    camera.position.set(targetPosition.x, targetPosition.y, targetPosition.z)
+    camera.lookAt(targetLookAt.x, targetLookAt.y, targetLookAt.z)
     // Setze den Drehpunkt (target) auf die gewünschte Position
-    controls.target.set(THREE.Vector3(5, 1.5, -15.1));
+    controls.target.set(targetLookAt.x, targetLookAt.y, targetLookAt.z);
     controls.update();
 
     // Erlaube nur Rotation, kein Zoom
