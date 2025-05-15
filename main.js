@@ -236,4 +236,4 @@ function startExperience() {
     }, 500);
 }
 
-window.anleitung = startExperience;
+window.startExperience = startExperience;
