@@ -556,8 +556,8 @@ function jumpToLager() {
     const targetPosition = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z);
     const targetLookAt = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z + 0.1);
 
-    camera.position.set(targetPosition)
-    camera.lookAt(targetLookAt)
+    camera.position.set(targetPosition.x, targetPosition.y, targetPosition.z)
+    camera.lookAt(targetLookAt.x, targetLookAt.y, targetLookAt.z)
     // Setze den Drehpunkt (target) auf die gewünschte Position
     controls.target.set(targetLookAt.x, targetLookAt.y, targetLookAt.z);
     controls.update();
