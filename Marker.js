@@ -32,16 +32,16 @@ function createMarker(h, b, pxx, pxz, text, x, y, z, r, color) {
     return marker;
 }
 
-export const proberaumlagerMarker = createMarker(0.5, 1, 256, 128, "zum Lager", 4, 1.5, -10, 1, 0xbebdb8);
-export const lagerMarker = createMarker(2.5, 5, 256, 128, "Start", -12, 10, 4, 0, 0xbebdb8);
+export const proberaumlagerMarker = createMarker(0.5, 1, 256, 128, "zum Lager", 4, 1.5, -10, 1, 0x888888);
+export const lagerMarker = createMarker(2.5, 5, 256, 128, "Start", -12, 10, 4, 0, 0x888888);
 // export const proberaumMarker = createMarker(1, 2, 256, 128, "Proberaum", 6.3, 10, -15, 0);
-export const leavelagerMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", -12.5, 1.5, -2, 0, 0xbebdb8);
-export const leaveproberaumMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", 2, 1.5, -10, 1, 0xbebdb8);
-export const lagerproberaumMarker = createMarker(0.5, 2, 512, 128, "zum Gesteinsraum", -12.5, 1.5, 8, 1, 0xbebdb8);
-export const toMischraumMarker = createMarker(0.5, 1.5, 384, 128, "zum Mischer", 6, 1.5, -10, 1, 0xbebdb8);
-export const leaveMischraum = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", -3, 1.5, 6, 1.5, 0xbebdb8);
-export const toMarshallMarker = createMarker(0.5, 1, 640, 128, "zum Marshall-Verdichter", -8, 2, 4.5, 2, 0xbebdb8)
-export const leaveMarshall = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", -3, 1.5, 3, 1.5, 0xbebdb8);
+export const leavelagerMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", -12.5, 1.5, -2, 0, 0x888888);
+export const leaveproberaumMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", 2, 1.5, -10, 1, 0x888888);
+export const lagerproberaumMarker = createMarker(0.5, 2, 512, 128, "zum Gesteinsraum", -12.5, 1.5, 8, 1, 0x888888);
+export const toMischraumMarker = createMarker(0.5, 1.5, 384, 128, "zum Mischer", 6, 1.5, -10, 1, 0x888888);
+export const leaveMischraum = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", -3, 1.5, 6, 1.5, 0x888888);
+export const toMarshallMarker = createMarker(0.5, 1, 640, 128, "zum Marshall-Verdichter", -8, 2, 4.5, 2, 0x888888)
+export const leaveMarshall = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", -3, 1.5, 3, 1.5, 0x888888);
 // export let totalProzentMesh = createMarker(1, 0.5, 256, 128, "Total: 0%", 8, 2, -16.75, -2);
 
 export let markers = [lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, leavelagerMarker, leaveMischraum, toMarshallMarker, leaveMarshall];  // Die Marker-Objekte
