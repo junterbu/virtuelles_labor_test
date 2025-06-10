@@ -9,19 +9,19 @@ const db = window.firebaseDB;
 
 
 // Funktion zum Erstellen eines Markers
-function createMarker(h, b, pxx, pxz, text, x, y, z, r, color) {
+function createMarker(h, b, pxx, pxz, text, x, y, z, r, color1, color2) {
     const geometry = new THREE.PlaneGeometry(b, h);
-    const material = new THREE.MeshStandardMaterial({ color: color, side: THREE.DoubleSide });
+    const material = new THREE.MeshStandardMaterial({ color: "black", side: THREE.DoubleSide });
 
     // Canvas für den Text
     const canvas = document.createElement('canvas');
     canvas.width = pxx;
     canvas.height = pxz;
     const context = canvas.getContext('2d');
-    context.fillStyle = 'blue'; // Deine Wunschfarbe
+    context.fillStyle = color1; // Deine Wunschfarbe
     context.fillRect(0, 0, canvas.width, canvas.height); // Hintergrund einfärben
     context.font = '50px Arial';
-    context.fillStyle = 'white';
+    context.fillStyle = color2;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(text, canvas.width / 2, canvas.height / 2);
@@ -34,16 +34,16 @@ function createMarker(h, b, pxx, pxz, text, x, y, z, r, color) {
     return marker;
 }
 
-export const proberaumlagerMarker = createMarker(0.5, 1, 256, 128, "zum Lager", 4, 1.5, -10, 1, 0x888888);
-export const lagerMarker = createMarker(2.5, 5, 256, 128, "Start", -12, 10, 4, 0, 0x888888);
+export const proberaumlagerMarker = createMarker(0.5, 1, 256, 128, "zum Lager", 4, 1.5, -10, 1, "black", "white");
+export const lagerMarker = createMarker(2.5, 5, 256, 128, "Start", -12, 10, 4, 0, "blue", "white");
 // export const proberaumMarker = createMarker(1, 2, 256, 128, "Proberaum", 6.3, 10, -15, 0);
-export const leavelagerMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", -12.5, 1.5, -2, 0, 0x888888);
-export const leaveproberaumMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", 2, 1.5, -10, 1, 0x888888);
-export const lagerproberaumMarker = createMarker(0.5, 2, 512, 128, "zum Gesteinsraum", -12.5, 1.5, 8, 1, 0x888888);
-export const toMischraumMarker = createMarker(0.5, 1.5, 384, 128, "zum Mischer", 6, 1.5, -10, 1, 0x888888);
-export const leaveMischraum = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", -3, 1.5, 6, 1.5, 0x888888);
-export const toMarshallMarker = createMarker(0.5, 1, 640, 128, "zum Marshall-Verdichter", -8, 2, 4.5, 2, 0x888888)
-export const leaveMarshall = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", -3, 1.5, 3, 1.5, 0x888888);
+export const leavelagerMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", -12.5, 1.5, -2, 0, "black", "white");
+export const leaveproberaumMarker = createMarker(0.5, 2, 512, 128, "zur Übersicht", 2, 1.5, -10, 1, "black", "white");
+export const lagerproberaumMarker = createMarker(0.5, 2, 512, 128, "zum Gesteinsraum", -12.5, 1.5, 8, 1, "black", "white");
+export const toMischraumMarker = createMarker(0.5, 1.5, 384, 128, "zum Mischer", 6, 1.5, -10, 1, "black", "white");
+export const leaveMischraum = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", -3, 1.5, 6, 1.5, "black", "white");
+export const toMarshallMarker = createMarker(0.5, 1, 640, 128, "zum Marshall-Verdichter", -8, 2, 4.5, 2, "black", "white")
+export const leaveMarshall = createMarker(0.5, 1.5, 512, 128, "zur Übersicht", -3, 1.5, 3, 1.5, "black", "white");
 // export let totalProzentMesh = createMarker(1, 0.5, 256, 128, "Total: 0%", 8, 2, -16.75, -2);
 
 export let markers = [lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, leavelagerMarker, leaveMischraum, toMarshallMarker, leaveMarshall];  // Die Marker-Objekte
