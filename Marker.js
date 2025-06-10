@@ -18,6 +18,8 @@ function createMarker(h, b, pxx, pxz, text, x, y, z, r, color) {
     canvas.width = pxx;
     canvas.height = pxz;
     const context = canvas.getContext('2d');
+    context.fillStyle = '#888888'; // Deine Wunschfarbe
+    context.fillRect(0, 0, canvas.width, canvas.height); // Hintergrund einfärben
     context.font = '50px Arial';
     context.fillStyle = 'blue';
     context.textAlign = 'center';
