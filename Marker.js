@@ -11,7 +11,7 @@ const db = window.firebaseDB;
 // Funktion zum Erstellen eines Markers
 function createMarker(h, b, pxx, pxz, text, x, y, z, r, color1, color2) {
     const geometry = new THREE.PlaneGeometry(b, h);
-    const material = new THREE.MeshStandardMaterial({ color: "black", side: THREE.DoubleSide });
+    const material = new THREE.MeshStandardMaterial({ color: 0x888888, side: THREE.DoubleSide });
 
     // Canvas für den Text
     const canvas = document.createElement('canvas');
