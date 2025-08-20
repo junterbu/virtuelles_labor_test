@@ -1,7 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';;
-import { isMobileDevice, scene, renderer } from './Allgemeines.js';
+import { isMobileDevice, scene} from './Allgemeines.js';
 import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js";
@@ -28,6 +31,85 @@ window.addEventListener('mousemove', (e) => {
         isDragging = true;
     }
 });
+
+export let renderer = new THREE.WebGLRenderer({
+  antialias: false,
+  alpha: false,
+  depth: true,
+  stencil: false,
+  preserveDrawingBuffer: false,
+  powerPreference: 'high-performance'
+});
+document.body.appendChild(renderer.domElement);
+renderer.outputEncoding = THREE.sRGBEncoding; // Farben im sRGB-Farbraum
+renderer.shadowMap.enabled = false;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+// --- Qualitätsprofil (Startwerte, werden dynamisch angepasst)
+export const quality = {
+  tier: 'auto',
+  maxDPR: 1.0,
+  renderScale: 1.0,
+  shadows: false,
+  post: false,
+  antialias: false,
+  targetFPS: 60
+};
+
+function applyQualityToRenderer() {
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, quality.maxDPR));
+  const w = Math.floor(window.innerWidth * quality.renderScale);
+  const h = Math.floor(window.innerHeight * quality.renderScale);
+  renderer.setSize(w, h, false);
+  renderer.shadowMap.enabled = quality.shadows;
+  renderer.antialias = quality.antialias;
+}
+
+export function updateQuality(patch) {
+  Object.assign(quality, patch);
+  applyQualityToRenderer();
+}
+
+export function detectGPUClass() {
+  const gl = renderer.getContext();
+  const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+  const vendor = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+  const info   = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+  const mem = navigator.deviceMemory || 4;
+
+  const isIGPU = /Intel|Iris|UHD|Apple|Vega/i.test(info) && !/NVIDIA|RTX|GTX|Radeon (RX|Pro)/i.test(info);
+
+  if (isIGPU || mem <= 4) {
+    updateQuality({ tier: 'low',  maxDPR: 0.9, renderScale: 0.9,  shadows: false, antialias: false, post: false, targetFPS: 30 });
+  } else if (mem <= 8) {
+    updateQuality({ tier: 'med',  maxDPR: 1.0, renderScale: 1.0,  shadows: true,  antialias: false, post: false, targetFPS: 45 });
+  } else {
+    updateQuality({ tier: 'high', maxDPR: 1.5, renderScale: 1.0,  shadows: true,  antialias: true,  post: true,  targetFPS: 60 });
+  }
+}
+
+// Composer (nur wenn Post aktiv)
+let composer = null;
+export function ensureComposer(cameraRef) {
+  if (quality.post && !composer) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, cameraRef));
+    const bloom = new UnrealBloomPass(undefined, 0.6, 0.4, 0.85);
+    composer.addPass(bloom);
+    composer.setSize(renderer.domElement.width, renderer.domElement.height);
+  }
+  if (!quality.post && composer) {
+    // Post deaktiviert -> Composer verwerfen
+    composer = null;
+  }
+  return composer;
+}
+
+export function renderFrame(cameraRef) {
+  const c = ensureComposer(cameraRef);
+  if (quality.post && c) c.render();
+  else renderer.render(scene, cameraRef);
+}
 
 window.addEventListener(inputEvent, function (event) {
     if (isDragging) return;
@@ -478,76 +560,66 @@ controls.dampingFactor = 0.25;
 controls.screenSpacePanning = false;
 controls.maxPolarAngle = Math.PI / 2; // Kamera darf nicht nach unten gehen
 
-// Frame-Rate-Messung und Qualitätsanpassung
-let frameTimes = [];
-let qualityLevel = 3;
+// Adaptiver Render-Loop (EMA) + Resize-Handling
+let lastTime = performance.now();
+let ema = 16;
+let cooldown = 0;
 
-function measureFrameRate() {
-    const now = performance.now();
-    frameTimes.push(now);
-
-    if (frameTimes.length > 60) {
-        frameTimes.shift();
-    }
-
-    if (frameTimes.length >= 2) {
-        const avgDeltaTime = (frameTimes[frameTimes.length - 1] - frameTimes[0]) / (frameTimes.length - 1);
-        const fps = 1000 / avgDeltaTime;
-
-        // Dynamische Anpassung
-        if (fps < 30 && qualityLevel > 1) {
-            qualityLevel--;
-            updateQuality(qualityLevel);
-        } else if (fps > 50 && qualityLevel < 3) {
-            qualityLevel++;
-            updateQuality(qualityLevel);
-        }
-    }
-
-    requestAnimationFrame(measureFrameRate);
+export function startLoop() {
+  detectGPUClass();
+  onWindowResize();
+  animate();
 }
 
-function updateQuality(level) {
-    switch (level) {
-        case 1:
-            renderer.setPixelRatio(0.5);
-            renderer.antialias = false;
-            dirLight1.shadow.mapSize.set(256, 256); // Geringere Schattenauflösung
-            break;
-        case 2:
-            renderer.setPixelRatio(1);
-            renderer.antialias = true;
-            dirLight1.shadow.mapSize.set(512, 512);
-            break;
-        case 3:
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.antialias = true;
-            dirLight1.shadow.mapSize.set(1024, 1024);
-            break;
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  const dt = now - lastTime;
+  lastTime = now;
+  ema = ema * 0.9 + dt * 0.1;
+
+  // Runterregeln
+  if (ema > 28 && cooldown <= 0) {
+    if (quality.renderScale > 0.75) {
+      updateQuality({ renderScale: Math.max(0.75, +(quality.renderScale - 0.05).toFixed(2)) });
+    } else if (quality.shadows) {
+      updateQuality({ shadows: false });
+    } else if (quality.post) {
+      updateQuality({ post: false });
+    } else if (quality.maxDPR > 0.8) {
+      updateQuality({ maxDPR: +(quality.maxDPR - 0.1).toFixed(2) });
     }
-    dirLight1.shadow.needsUpdate = true; // Aktualisiere Schatten
+    cooldown = 60;
+  }
+
+  // Hochregeln
+  if (ema < 16 && cooldown <= 0) {
+    if (quality.maxDPR < 1.0 && quality.tier !== 'low') {
+      updateQuality({ maxDPR: Math.min(1.0, +(quality.maxDPR + 0.1).toFixed(2)) });
+    } else if (!quality.shadows && quality.tier !== 'low') {
+      updateQuality({ shadows: true });
+    } else if (!quality.post && quality.tier === 'high') {
+      updateQuality({ post: true });
+    } else if (quality.renderScale < 1.0) {
+      updateQuality({ renderScale: Math.min(1.0, +(quality.renderScale + 0.05).toFixed(2)) });
+    }
+    cooldown = 120;
+  }
+
+  if (cooldown > 0) cooldown--;
+
+  renderFrame(camera);
+}
+
+function onWindowResize() {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  applyQualityToRenderer();
 }
 
 window.addEventListener('resize', onWindowResize);
-
-function onWindowResize() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    // Kamera-Aspektverhältnis aktualisieren
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-
-    // Renderer-Größe anpassen
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
-}
-
-// Initiale Anpassung beim Start
-onWindowResize();
-
-
-measureFrameRate();
 
 function jumpToLager() {
     currentRoom = "Lager";
