@@ -341,7 +341,7 @@
         import {scene, camera, renderer, isMobileDevice} from "./Allgemeines.js";
         import {mouse, raycaster} from "./main.js";
         import {lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
-        import {goToLager, fromLagertoProberaum, goToMischraum, leaveView, controls, toMarshall, fromProberaumtoLager, startARView, startLoop} from "./View_functions.js";
+        import {goToLager, fromLagertoProberaum, goToMischraum, leaveView, controls, toMarshall, fromProberaumtoLager, startARView} from "./View_functions.js";
         import {proberaumPositionen, schildchen, eimerMeshes, eimerPositionen, createEimerLabel, loader} from "./Lager.js";
         import {eimerWerte} from "./Gesteinsraum.js"
 
@@ -382,8 +382,6 @@
         scene.add(leaveMischraum);
         scene.add(toMarshallMarker);
         scene.add(leaveMarshall);
-
-        startLoop(); // Startet die Animationsschleife
         // Event-Listener für den AR-Button
     </script>
 </body>

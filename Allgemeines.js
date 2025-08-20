@@ -5,13 +5,23 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
 
-let renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
-document.body.appendChild(renderer.domElement);
-renderer.antialias = false;
-renderer.outputEncoding = THREE.sRGBEncoding; // Verbessert Farben ohne zusätzlichen Speicherbedarf
-renderer.shadowMap.enabled = false; // Nur aktivieren, wenn Schatten notwendig
+let renderer = new THREE.WebGLRenderer({
+  antialias: false,
+  alpha: false,
+  powerPreference: 'high-performance'
+});
 
+// wenn du den Container benutzen willst, sonst bleibt document.body
+const container = document.getElementById('canvas-container') || document.body;
+container.appendChild(renderer.domElement);
+
+// DPR leicht clampen, schont iGPU
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.0));
+// volle Fenstergröße, kein /2
+renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = false;
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(20, 20, 5);
 
@@ -102,5 +112,24 @@ loader_overview.load('Assets/overview-v1.glb', function(gltf) {
 
 //     console.log("AR-Ansicht verlassen.");
 // }
+function handleResize() {
+  const width  = window.innerWidth;
+  const height = window.innerHeight;
+
+  // Kamera
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  // Renderer (interne Auflösung)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.0));
+  renderer.setSize(width, height, false);
+
+  // !!! Composer mitresizen, sonst weißes Bild
+  if (typeof composer !== 'undefined' && composer) {
+    composer.setSize(width, height);
+  }
+}
+
+window.addEventListener('resize', handleResize);
 
 export {renderer, camera}
