@@ -614,9 +614,19 @@ function animate() {
 function onWindowResize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
+
+  // Kamera aktualisieren
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
+
+  // Renderer auf neue Größe einstellen
   applyQualityToRenderer();
+
+  // Composer ggf. neu justieren
+  const c = ensureComposer(camera);
+  if (c) {
+    c.setSize(width, height);
+  }
 }
 
 window.addEventListener('resize', onWindowResize);
