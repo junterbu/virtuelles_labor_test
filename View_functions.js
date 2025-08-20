@@ -32,18 +32,6 @@ window.addEventListener('mousemove', (e) => {
     }
 });
 
-export let renderer = new THREE.WebGLRenderer({
-  antialias: false,
-  alpha: false,
-  depth: true,
-  stencil: false,
-  preserveDrawingBuffer: false,
-  powerPreference: 'high-performance'
-});
-document.body.appendChild(renderer.domElement);
-renderer.outputEncoding = THREE.sRGBEncoding; // Farben im sRGB-Farbraum
-renderer.shadowMap.enabled = false;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // --- Qualitätsprofil (Startwerte, werden dynamisch angepasst)
 export const quality = { tier:'auto', maxDPR:1.0, renderScale:1.0, shadows:false, post:false, antialias:false, targetFPS:60 };
