@@ -9,7 +9,7 @@ import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaum
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js";
 import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions, getVisibleIntersects } from "./main.js";
-import {dirLight1, camera } from "./Allgemeines.js";
+import {dirLight1, camera, renderer } from "./Allgemeines.js";
 // Bestimmen Sie das Event basierend auf dem Gerät
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
 
@@ -46,70 +46,60 @@ renderer.shadowMap.enabled = false;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // --- Qualitätsprofil (Startwerte, werden dynamisch angepasst)
-export const quality = {
-  tier: 'auto',
-  maxDPR: 1.0,
-  renderScale: 1.0,
-  shadows: false,
-  post: false,
-  antialias: false,
-  targetFPS: 60
-};
-
+export const quality = { tier:'auto', maxDPR:1.0, renderScale:1.0, shadows:false, post:false, antialias:false, targetFPS:60 };
 function applyQualityToRenderer() {
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, quality.maxDPR));
-  const w = Math.floor(window.innerWidth * quality.renderScale);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality.maxDPR));
+  const w = Math.floor(window.innerWidth  * quality.renderScale);
   const h = Math.floor(window.innerHeight * quality.renderScale);
   renderer.setSize(w, h, false);
   renderer.shadowMap.enabled = quality.shadows;
-  renderer.antialias = quality.antialias;
 }
 
-export function updateQuality(patch) {
-  Object.assign(quality, patch);
-  applyQualityToRenderer();
-}
+export function updateQuality(patch){ Object.assign(quality, patch); applyQualityToRenderer(); }
 
 export function detectGPUClass() {
   const gl = renderer.getContext();
   const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-  const vendor = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
-  const info   = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+  const info = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
   const mem = navigator.deviceMemory || 4;
-
   const isIGPU = /Intel|Iris|UHD|Apple|Vega/i.test(info) && !/NVIDIA|RTX|GTX|Radeon (RX|Pro)/i.test(info);
-
-  if (isIGPU || mem <= 4) {
-    updateQuality({ tier: 'low',  maxDPR: 0.9, renderScale: 0.9,  shadows: false, antialias: false, post: false, targetFPS: 30 });
-  } else if (mem <= 8) {
-    updateQuality({ tier: 'med',  maxDPR: 1.0, renderScale: 1.0,  shadows: true,  antialias: false, post: false, targetFPS: 45 });
-  } else {
-    updateQuality({ tier: 'high', maxDPR: 1.5, renderScale: 1.0,  shadows: true,  antialias: true,  post: true,  targetFPS: 60 });
-  }
+  if (isIGPU || mem <= 4) updateQuality({ tier:'low',  maxDPR:0.9, renderScale:0.9,  shadows:false, antialias:false, post:false, targetFPS:30 });
+  else if (mem <= 8)       updateQuality({ tier:'med',  maxDPR:1.0, renderScale:1.0,  shadows:true,  antialias:false, post:false, targetFPS:45 });
+  else                     updateQuality({ tier:'high', maxDPR:1.5, renderScale:1.0,  shadows:true,  antialias:true,  post:true,  targetFPS:60 });
 }
 
-// Composer (nur wenn Post aktiv)
+// --- Composer nur wenn post === true ---
 let composer = null;
-export function ensureComposer(cameraRef) {
+function ensureComposer() {
   if (quality.post && !composer) {
     composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, cameraRef));
+    composer.addPass(new RenderPass(scene, camera));
     const bloom = new UnrealBloomPass(undefined, 0.6, 0.4, 0.85);
     composer.addPass(bloom);
     composer.setSize(renderer.domElement.width, renderer.domElement.height);
   }
-  if (!quality.post && composer) {
-    // Post deaktiviert -> Composer verwerfen
-    composer = null;
-  }
+  if (!quality.post && composer) composer = null;
   return composer;
 }
 
-export function renderFrame(cameraRef) {
-  const c = ensureComposer(cameraRef);
+// --- Zentraler Render-Call ---
+function renderFrame() {
+  const c = ensureComposer();
   if (quality.post && c) c.render();
-  else renderer.render(scene, cameraRef);
+  else renderer.render(scene, camera);
 }
+
+// --- Resize: Kamera + Renderer + Composer ---
+function onWindowResize() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  applyQualityToRenderer();
+  const c = ensureComposer();
+  if (c) c.setSize(w, h);
+}
+window.addEventListener('resize', onWindowResize);
 
 window.addEventListener(inputEvent, function (event) {
     if (isDragging) return;
@@ -562,74 +552,40 @@ controls.maxPolarAngle = Math.PI / 2; // Kamera darf nicht nach unten gehen
 
 // Adaptiver Render-Loop (EMA) + Resize-Handling
 let lastTime = performance.now();
-let ema = 16;
+
+// --- Adaptiver Loop ---
+let last = performance.now();
+let ema = 16; 
 let cooldown = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  const dt = now - last; last = now; ema = ema*0.9 + dt*0.1;
+
+  if (ema > 28 && cooldown<=0) {
+    if (quality.renderScale > 0.75) updateQuality({ renderScale: +(Math.max(0.75, quality.renderScale - 0.05)).toFixed(2) });
+    else if (quality.shadows)        updateQuality({ shadows:false });
+    else if (quality.post)           updateQuality({ post:false });
+    else if (quality.maxDPR > 0.8)   updateQuality({ maxDPR: +(quality.maxDPR - 0.1).toFixed(2) });
+    cooldown = 60;
+  }
+  if (ema < 16 && cooldown<=0) {
+    if (quality.maxDPR < 1.0 && quality.tier!=='low') updateQuality({ maxDPR: Math.min(1.0, +(quality.maxDPR + 0.1).toFixed(2)) });
+    else if (!quality.shadows && quality.tier!=='low') updateQuality({ shadows:true });
+    else if (!quality.post && quality.tier==='high')   updateQuality({ post:true });
+    else if (quality.renderScale < 1.0)                updateQuality({ renderScale: Math.min(1.0, +(quality.renderScale + 0.05).toFixed(2)) });
+    cooldown = 120;
+  }
+  if (cooldown>0) cooldown--;
+
+  renderFrame();
+}
 
 export function startLoop() {
   detectGPUClass();
   onWindowResize();
   animate();
 }
-
-function animate() {
-  requestAnimationFrame(animate);
-  const now = performance.now();
-  const dt = now - lastTime;
-  lastTime = now;
-  ema = ema * 0.9 + dt * 0.1;
-
-  // Runterregeln
-  if (ema > 28 && cooldown <= 0) {
-    if (quality.renderScale > 0.75) {
-      updateQuality({ renderScale: Math.max(0.75, +(quality.renderScale - 0.05).toFixed(2)) });
-    } else if (quality.shadows) {
-      updateQuality({ shadows: false });
-    } else if (quality.post) {
-      updateQuality({ post: false });
-    } else if (quality.maxDPR > 0.8) {
-      updateQuality({ maxDPR: +(quality.maxDPR - 0.1).toFixed(2) });
-    }
-    cooldown = 60;
-  }
-
-  // Hochregeln
-  if (ema < 16 && cooldown <= 0) {
-    if (quality.maxDPR < 1.0 && quality.tier !== 'low') {
-      updateQuality({ maxDPR: Math.min(1.0, +(quality.maxDPR + 0.1).toFixed(2)) });
-    } else if (!quality.shadows && quality.tier !== 'low') {
-      updateQuality({ shadows: true });
-    } else if (!quality.post && quality.tier === 'high') {
-      updateQuality({ post: true });
-    } else if (quality.renderScale < 1.0) {
-      updateQuality({ renderScale: Math.min(1.0, +(quality.renderScale + 0.05).toFixed(2)) });
-    }
-    cooldown = 120;
-  }
-
-  if (cooldown > 0) cooldown--;
-
-  renderFrame(camera);
-}
-
-function onWindowResize() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-
-  // Kamera aktualisieren
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-
-  // Renderer auf neue Größe einstellen
-  applyQualityToRenderer();
-
-  // Composer ggf. neu justieren
-  const c = ensureComposer(camera);
-  if (c) {
-    c.setSize(width, height);
-  }
-}
-
-window.addEventListener('resize', onWindowResize);
 
 function jumpToLager() {
     currentRoom = "Lager";

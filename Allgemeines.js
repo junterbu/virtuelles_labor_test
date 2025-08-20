@@ -11,7 +11,6 @@ let renderer = new THREE.WebGLRenderer({
   powerPreference: 'high-performance'
 });
 
-// wenn du den Container benutzen willst, sonst bleibt document.body
 const container = document.getElementById('canvas-container') || document.body;
 container.appendChild(renderer.domElement);
 
