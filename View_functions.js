@@ -165,17 +165,7 @@ export function goToLager() {
     const targetPosition = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z);
     const targetLookAt = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z + 0.1);
     try {
-        // Ziel bestimmen: Marker oder Fallback
-        const target = (targetPosition && targetLookAt) 
-        ? targetPosition.clone() 
-        : new THREE.Vector3(0, 1.6, 0); // Fallback, anpassen wenn nötig
-
-        // Kamera-Zielposition leicht versetzt (z.B. 3m zurück und 1.6m Höhe)
-        const offset = new THREE.Vector3(0, 1.6, 3);
-        const targetCam = target.clone().add(offset);
-
-        // LookAt exakt auf den Marker (oder Fallback)
-        flyTo(targetCam, target, 1200);
+        flyTo(targetPosition, targetLookAt, 1200);
         console.log('[goToLager] moving camera to Lager…');
     } catch (e) {
         console.error('[goToLager] failed:', e);
