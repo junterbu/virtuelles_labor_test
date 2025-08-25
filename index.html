@@ -383,17 +383,6 @@
         scene.add(toMarshallMarker);
         scene.add(leaveMarshall);
 
-        // Animations-Loop
-        function animate() {
-            requestAnimationFrame(animate);
-
-            const cameraPosFlat = camera.position.clone();
-            cameraPosFlat.y = lagerMarker.position.y;
-            lagerMarker.lookAt(cameraPosFlat);
-            
-            renderer.render(scene, camera);
-        }
-        animate();
     </script>
 </body>
 </html>

@@ -9,7 +9,16 @@ import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaum
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js";
 import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions, getVisibleIntersects } from "./main.js";
-import {dirLight1, camera, renderer } from "./Allgemeines.js";
+import { dirLight1, scene, camera, renderer, composer, LOW_END, TARGET_FPS, QUALITY } from './Allgemeines.js';
+
+function renderFrame() {
+  if (composer && QUALITY.usePostFX) {
+    composer.render();
+  } else {
+    renderer.render(scene, camera);
+  }
+}
+
 // Bestimmen Sie das Event basierend auf dem Gerät
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
 
@@ -636,7 +645,20 @@ function jumpToMischraum() {
     window.dispatchEvent(event);
 }
 
+// OrbitControls fine-tuning
+if (LOW_END) {
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.15;
+  controls.rotateSpeed = 0.6;
+}
 
+// Shader/Material:
+mesh.material.toneMapped = !LOW_END;
+
+// Partikeleffekte / Reflections / HDR:
+if (LOW_END) {
+  // keinen HDR-Hintergrund laden, keine Reflections, kleinere Texturen
+}
 
 window.addEventListener("keydown", function(event) {
     if (event.key === "l" || event.key === "L") {

@@ -6,13 +6,49 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
+// === Low-End GPU Detection & Quality Profiles ===
+function detectLowEndGPU() {
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) return true;
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    if (!dbg) return false;
+    const renderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || "";
+    // Heuristik: Intel/UMA/iGPU => Low-End
+    return /intel|uhd|iris|radeon vega|apu|mesa/i.test(renderer);
+  } catch { return true; }
+}
 
-let renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+export const LOW_END = detectLowEndGPU();
+
+// Ziel-FPS: 60 bei High-End, 30 bei Low-End
+export const TARGET_FPS = LOW_END ? 30 : 60;
+
+// Qualitätsprofile: alles an einem Ort zentral steuern
+export const QUALITY = LOW_END ? {
+  antialias: false,
+  pixelRatio: 0.6,          // 60% interne Auflösung
+  shadows: false,
+  usePostFX: false
+} : {
+  antialias: true,
+  pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+  shadows: false,           // bei Bedarf true
+  usePostFX: true
+};
+
+let renderer = new THREE.WebGLRenderer({
+  antialias: QUALITY.antialias,
+  powerPreference: LOW_END ? 'low-power' : 'high-performance',
+  alpha: false,
+  preserveDrawingBuffer: false
+});
+renderer.setPixelRatio(QUALITY.pixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight, false);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = QUALITY.shadows;
 document.body.appendChild(renderer.domElement);
-renderer.antialias = false;
-renderer.outputEncoding = THREE.sRGBEncoding; // Verbessert Farben ohne zusätzlichen Speicherbedarf
-renderer.shadowMap.enabled = false; // Nur aktivieren, wenn Schatten notwendig
 
 const container = document.getElementById('canvas-container') || document.body;
 container.appendChild(renderer.domElement);
@@ -88,9 +124,16 @@ scene.add(pointLight);
 
 scene.background = new THREE.Color(0x87ceeb); // Hellblauer Himmel
 
-const composer = new EffectComposer(renderer);
-const renderPass = new RenderPass(scene, camera);
-composer.addPass(renderPass);
+let composer = null;
+if (QUALITY.usePostFX) {
+  composer = new EffectComposer(renderer);
+  const renderPass = new RenderPass(scene, camera);
+  composer.addPass(renderPass);
+
+  // Beispiel: Bloom nur auf High-End
+  // const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.6, 0.4, 0.85);
+  // composer.addPass(bloom);
+};
 
 // // Bloom-Effekt hinzufügen
 // const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
@@ -99,12 +142,23 @@ composer.addPass(renderPass);
 // bloomPass.radius = 0;
 // composer.addPass(bloomPass);
 
-// Animation-Loop mit Composer
-function animate_renderer() {
-    requestAnimationFrame(animate_renderer);
-    TWEEN.update(); // Tween-Animationen aktualisieren
-    composer.render(); // Verwende Composer anstelle von renderer.render()
+let lastTime = 0;
+const frameInterval = 1000 / TARGET_FPS;
+
+function animate(now) {
+  requestAnimationFrame(animate);
+
+  if (now - lastTime < frameInterval) return;
+  lastTime = now;
+
+  // TODO: hier deine Per-Frame-Updates einfügen (Marker lookAt, TWEEN.update, Controls.update etc.)
+  // z.B.:
+  // controls.update();
+  // TWEEN.update(now);
+
+  renderFrame();
 }
+requestAnimationFrame(animate);
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -145,23 +199,17 @@ window.addEventListener('resize', () => {
 //     console.log("AR-Ansicht verlassen.");
 // }
 function handleResize() {
-  const width  = window.innerWidth;
+  const width = window.innerWidth;
   const height = window.innerHeight;
 
-  // Kamera
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 
-  // Renderer (interne Auflösung)
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.0));
+  renderer.setPixelRatio(QUALITY.pixelRatio);
   renderer.setSize(width, height, false);
 
-  // !!! Composer mitresizen, sonst weißes Bild
-  if (typeof composer !== 'undefined' && composer) {
-    composer.setSize(width, height);
-  }
+  if (composer) composer.setSize(width, height);
 }
-
 window.addEventListener('resize', handleResize);
 
-export {renderer, camera}
+export { renderer, camera, LOW_END, TARGET_FPS, QUALITY, composer, scene };
