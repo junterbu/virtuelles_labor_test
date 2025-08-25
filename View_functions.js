@@ -1,8 +1,5 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
 import { VRButton } from 'three/addons/webxr/VRButton.js';
@@ -20,6 +17,12 @@ function applyToAllMeshes(callback) {
   });
 }
 
+//Orbit Controls
+export let controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;  // Smooth Camera Movements
+controls.dampingFactor = 0.25;
+controls.screenSpacePanning = false;
+controls.maxPolarAngle = Math.PI / 2; // Kamera darf nicht nach unten gehen
 
 // Bestimmen Sie das Event basierend auf dem Gerät
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
@@ -127,29 +130,29 @@ export function startARView() {
 // }
 
 
+function flyTo(targetPos, lookAtPos, duration = 1200) {
+  const start = performance.now();
+  const fromPos = camera.position.clone();
+  const fromLook = new THREE.Vector3();
+  camera.getWorldDirection(fromLook);
+  const lookStart = camera.position.clone().add(fromLook);
+  const lookEnd = lookAtPos.clone();
 
-export function animateCamera(targetPosition, targetLookAt) {
-    const startPosition = camera.position.clone();
-    const startLookAt = controls.target.clone();
+  function easeInOutQuad(t){ return t<0.5 ? 2*t*t : -1+(4-2*t)*t; }
 
-    // Kamera-Position animieren
-    new TWEEN.Tween(startPosition)
-        .to(targetPosition, 2000)
-        .easing(TWEEN.Easing.Quadratic.Out)
-        .onUpdate(() => {
-            camera.position.copy(startPosition);
-        })
-        .start();
+  function step(now){
+    const t = Math.min(1, (now - start) / duration);
+    const k = easeInOutQuad(t);
 
-    // Zielpunkt (controls.target) animieren
-    new TWEEN.Tween(startLookAt)
-        .to(targetLookAt, 2000)
-        .easing(TWEEN.Easing.Quadratic.Out)
-        .onUpdate(() => {
-            controls.target.copy(startLookAt);
-            controls.update();
-        })
-        .start();
+    camera.position.lerpVectors(fromPos, targetPos, k);
+
+    const look = new THREE.Vector3().lerpVectors(lookStart, lookEnd, k);
+    camera.lookAt(look);
+
+    controls.update();
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
 }
 
 // Kamera-Positionen für Lagerraum und Proberaum
@@ -159,14 +162,22 @@ let MischraumViewpoint = new THREE.Vector3(-8, 1.5, 7);
 let MarshallViewpoint = new THREE.Vector3(-8, 1.5, 3);
 export let currentRoom = ""
 export function goToLager() {
-    currentRoom = "Lager";
-    // Zielposition und LookAt-Werte definieren
-    const targetPosition = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z);
-    const targetLookAt = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z + 0.1);
+    try {
+        // Ziel bestimmen: Marker oder Fallback
+        const target = (lagerMarker && lagerMarker.position) 
+        ? lagerMarker.position.clone() 
+        : new THREE.Vector3(0, 1.6, 0); // Fallback, anpassen wenn nötig
 
-    // Kamera animiert bewegen
-    animateCamera(targetPosition, targetLookAt);
+        // Kamera-Zielposition leicht versetzt (z.B. 3m zurück und 1.6m Höhe)
+        const offset = new THREE.Vector3(0, 1.6, 3);
+        const targetCam = target.clone().add(offset);
 
+        // LookAt exakt auf den Marker (oder Fallback)
+        flyTo(targetCam, target, 1200);
+        console.log('[goToLager] moving camera to Lager…');
+    } catch (e) {
+        console.error('[goToLager] failed:', e);
+    }
     // Setze den Drehpunkt (target) auf die gewünschte Position
     controls.target.set(targetLookAt.x, targetLookAt.y, targetLookAt.z);
     controls.update();
@@ -185,6 +196,12 @@ export function goToLager() {
 
     const event = new CustomEvent('roomChanged', { detail: 'Lager' });
     window.dispatchEvent(event);
+}
+
+
+// Legacy: auch global verfügbar machen (wichtig, wenn irgendwo onclick="goToLager()" benutzt wird)
+if (typeof window !== 'undefined') {
+  window.goToLager = goToLager;
 }
 
 async function starteDoppelQuiz() {
@@ -484,13 +501,6 @@ export async  function toMarshall() {
     window.dispatchEvent(event);
 }
 
-
-//Orbit Controls
-export let controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;  // Smooth Camera Movements
-controls.dampingFactor = 0.25;
-controls.screenSpacePanning = false;
-controls.maxPolarAngle = Math.PI / 2; // Kamera darf nicht nach unten gehen
 
 // Frame-Rate-Messung und Qualitätsanpassung
 let frameTimes = [];
