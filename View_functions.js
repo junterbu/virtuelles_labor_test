@@ -167,7 +167,7 @@ export function goToLager() {
     try {
         // Ziel bestimmen: Marker oder Fallback
         const target = (targetPosition && targetLookAt) 
-        ? lagerViewpoint.position.clone() 
+        ? targetPosition.clone() 
         : new THREE.Vector3(0, 1.6, 0); // Fallback, anpassen wenn nötig
 
         // Kamera-Zielposition leicht versetzt (z.B. 3m zurück und 1.6m Höhe)
