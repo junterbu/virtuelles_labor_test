@@ -47,7 +47,7 @@ export function updateQuality(patch){ Object.assign(quality, patch); applyQualit
 
 export function detectGPUClass() {
   const gl = renderer.getContext();
-  const dbg = gl.getExtension('RENDERER');
+  const dbg = gl.getExtension('WEBGL_debug_renderer_info');
   const info = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
   const mem = navigator.deviceMemory || 4;
   const isIGPU = /Intel|Iris|UHD|Apple|Vega/i.test(info) && !/NVIDIA|RTX|GTX|Radeon (RX|Pro)/i.test(info);
