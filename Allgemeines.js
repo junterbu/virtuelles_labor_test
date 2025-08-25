@@ -2,14 +2,17 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import * as THREE from "three";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
 
-let renderer = new THREE.WebGLRenderer({
-  antialias: false,
-  alpha: false,
-  powerPreference: 'high-performance'
-});
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+document.body.appendChild(renderer.domElement);
+renderer.antialias = false;
+renderer.outputEncoding = THREE.sRGBEncoding; // Verbessert Farben ohne zusätzlichen Speicherbedarf
+renderer.shadowMap.enabled = false; // Nur aktivieren, wenn Schatten notwendig
 
 const container = document.getElementById('canvas-container') || document.body;
 container.appendChild(renderer.domElement);
@@ -85,6 +88,28 @@ scene.add(pointLight);
 
 scene.background = new THREE.Color(0x87ceeb); // Hellblauer Himmel
 
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+// // Bloom-Effekt hinzufügen
+// const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+// bloomPass.threshold = 0;
+// bloomPass.strength = 1.5;
+// bloomPass.radius = 0;
+// composer.addPass(bloomPass);
+
+// Animation-Loop mit Composer
+function animate_renderer() {
+    requestAnimationFrame(animate_renderer);
+    TWEEN.update(); // Tween-Animationen aktualisieren
+    composer.render(); // Verwende Composer anstelle von renderer.render()
+}
+
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+//renderer.setAntialias();
+
 // GLTFLoader, um Modelle (Gebäude, Eimer, Siebturm) zu laden
 export const loader_overview = new GLTFLoader();
 loader_overview.setDRACOLoader(dracoLoader); //nur wenn datei mit Draco komprimiert!
@@ -97,6 +122,14 @@ loader_overview.load('Assets/overview-v1.glb', function(gltf) {
     console.error('Fehler beim Laden des GLTF-Modells:', error);
 });
 
+animate_renderer(); 
+
+window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+});
 
 // export function exitARView() {
 //     // Hintergrund wiederherstellen
