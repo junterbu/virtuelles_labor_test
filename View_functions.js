@@ -162,6 +162,7 @@ let MischraumViewpoint = new THREE.Vector3(-8, 1.5, 7);
 let MarshallViewpoint = new THREE.Vector3(-8, 1.5, 3);
 export let currentRoom = ""
 export function goToLager() {
+    currentRoom = "Lager";
     const targetPosition = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z);
     const targetLookAt = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z + 0.1);
     try {
