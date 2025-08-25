@@ -10,6 +10,15 @@ import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js"
 import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions, getVisibleIntersects } from "./main.js";
 import { isMobileDevice, dirLight1, scene, camera, renderer, composer, LOW_END, TARGET_FPS, QUALITY } from './Allgemeines.js';
 
+function applyToAllMeshes(callback) {
+  scene.traverse((obj) => {
+    if (!obj || !obj.isMesh) return;
+
+    // Material kann ein Array sein (GLTF), also vereinheitlichen:
+    const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+    callback(obj, materials);
+  });
+}
 
 
 // Bestimmen Sie das Event basierend auf dem Gerät
@@ -645,8 +654,15 @@ if (LOW_END) {
   controls.rotateSpeed = 0.6;
 }
 
-// Shader/Material:
-mesh.material.toneMapped = !LOW_END;
+applyToAllMeshes((obj, materials) => {
+  for (const m of materials) {
+    if (!m) continue;
+    // Beispiel: was vorher bei "mesh.material" stand, jetzt pro Material:
+    // m.toneMapped = !LOW_END;
+    // m.transparent = true;        // falls du sowas machst
+    // m.needsUpdate = true;        // bei Material-Flags oft sinnvoll
+  }
+});
 
 // Partikeleffekte / Reflections / HDR:
 if (LOW_END) {

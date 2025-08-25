@@ -12,12 +12,24 @@ function detectLowEndGPU() {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (!gl) return true;
-    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-    if (!dbg) return false;
-    const renderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || "";
+
+    let name = '';
+    // Versuche die nicht-standardisierte Info (liefert am meisten Details, aber ist deprecated)
+    const dbg = gl.getExtension && gl.getExtension('WEBGL_debug_renderer_info');
+    if (dbg && gl.getParameter) {
+      name = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '';
+    }
+
+    // Fallback auf Standard
+    if (!name && gl.getParameter) {
+      name = gl.getParameter(gl.RENDERER) || '';
+    }
+
     // Heuristik: Intel/UMA/iGPU => Low-End
-    return /intel|uhd|iris|radeon vega|apu|mesa/i.test(renderer);
-  } catch { return true; }
+    return /intel|uhd|iris|radeon vega|apu|mesa|llvmpipe/i.test(String(name));
+  } catch {
+    return true;
+  }
 }
 
 const LOW_END = detectLowEndGPU();
