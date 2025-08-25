@@ -142,6 +142,14 @@ if (QUALITY.usePostFX) {
 // bloomPass.radius = 0;
 // composer.addPass(bloomPass);
 
+function renderFrame() {
+  if (composer && QUALITY.usePostFX) {
+    composer.render();
+  } else {
+    renderer.render(scene, camera);
+  }
+}
+
 let lastTime = 0;
 const frameInterval = 1000 / TARGET_FPS;
 

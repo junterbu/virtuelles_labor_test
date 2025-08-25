@@ -10,13 +10,7 @@ import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js"
 import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions, getVisibleIntersects } from "./main.js";
 import { isMobileDevice, dirLight1, scene, camera, renderer, composer, LOW_END, TARGET_FPS, QUALITY } from './Allgemeines.js';
 
-function renderFrame() {
-  if (composer && QUALITY.usePostFX) {
-    composer.render();
-  } else {
-    renderer.render(scene, camera);
-  }
-}
+
 
 // Bestimmen Sie das Event basierend auf dem Gerät
 const inputEvent = isMobileDevice() ? 'touchstart' : 'click';
