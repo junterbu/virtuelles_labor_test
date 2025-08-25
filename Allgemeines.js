@@ -79,7 +79,7 @@ const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/'); // Pfad zum Draco-Decoder (kann angepasst werden)
 
 // Setup der Three.js Szene
-export let scene = new THREE.Scene();
+let scene = new THREE.Scene();
 
 const basicMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
 
