@@ -184,8 +184,6 @@ loader_overview.load('Assets/overview-v1.glb', function(gltf) {
     console.error('Fehler beim Laden des GLTF-Modells:', error);
 });
 
-animate_renderer(); 
-
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
