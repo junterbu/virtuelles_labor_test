@@ -211,7 +211,7 @@ export function goToLager() {
     const targetLookAt = new THREE.Vector3(lagerViewpoint.x, lagerViewpoint.y, lagerViewpoint.z + 0.1);
 
     // Kamera animiert bewegen
-    //animateCamera(targetPosition, targetLookAt);
+    animateCamera(targetPosition, targetLookAt);
 
     // Setze den Drehpunkt (target) auf die gewünschte Position
     controls.target.set(targetLookAt.x, targetLookAt.y, targetLookAt.z);
