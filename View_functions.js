@@ -3,13 +3,12 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';;
-import { isMobileDevice, scene} from './Allgemeines.js';
+import {TWEEN} from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 import { lagerMarker, leaveproberaumMarker, proberaumlagerMarker, lagerproberaumMarker, toMischraumMarker, leaveMischraum, leavelagerMarker, toMarshallMarker, leaveMarshall, activeMarkers, markers} from "./Marker.js";
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { zeigeQuiz, speicherePunkte, quizFragen, quizPunkte } from "./Marker.js";
 import { getUserQuizFragen, getNextTwoQuestions, getNextQuestions, getVisibleIntersects } from "./main.js";
-import { dirLight1, scene, camera, renderer, composer, LOW_END, TARGET_FPS, QUALITY } from './Allgemeines.js';
+import { isMobileDevice, dirLight1, scene, camera, renderer, composer, LOW_END, TARGET_FPS, QUALITY } from './Allgemeines.js';
 
 function renderFrame() {
   if (composer && QUALITY.usePostFX) {

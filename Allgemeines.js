@@ -20,13 +20,13 @@ function detectLowEndGPU() {
   } catch { return true; }
 }
 
-export const LOW_END = detectLowEndGPU();
+const LOW_END = detectLowEndGPU();
 
 // Ziel-FPS: 60 bei High-End, 30 bei Low-End
-export const TARGET_FPS = LOW_END ? 30 : 60;
+const TARGET_FPS = LOW_END ? 30 : 60;
 
 // Qualitätsprofile: alles an einem Ort zentral steuern
-export const QUALITY = LOW_END ? {
+const QUALITY = LOW_END ? {
   antialias: false,
   pixelRatio: 0.6,          // 60% interne Auflösung
   shadows: false,
