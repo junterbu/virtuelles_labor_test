@@ -157,6 +157,7 @@ function flyTo(targetPos, lookAtPos, duration = 1200) {
 
 // Kamera-Positionen für Lagerraum und Proberaum
 let lagerViewpoint = new THREE.Vector3(-12.5, 1.5, 4);
+let lagerlookat = new THREE.Vector3(-12.5, 1.5, 4.1);
 let proberaumViewpoint = new THREE.Vector3(5, 1.5, -15);
 let MischraumViewpoint = new THREE.Vector3(-8, 1.5, 7);
 let MarshallViewpoint = new THREE.Vector3(-8, 1.5, 3);
@@ -164,8 +165,8 @@ export let currentRoom = ""
 export function goToLager() {
     try {
         // Ziel bestimmen: Marker oder Fallback
-        const target = (lagerMarker && lagerMarker.position) 
-        ? lagerMarker.position.clone() 
+        const target = (lagerViewpoint && lagerlookat) 
+        ? lagerViewpoint.position.clone() 
         : new THREE.Vector3(0, 1.6, 0); // Fallback, anpassen wenn nötig
 
         // Kamera-Zielposition leicht versetzt (z.B. 3m zurück und 1.6m Höhe)
