@@ -394,8 +394,7 @@ export function leaveView() {
     const targetPosition = new THREE.Vector3(20, 20, 20);
     const targetLookAt = new THREE.Vector3(0, 0, 0);
 
-    // Kamera animiert bewegen
-    animateCamera(targetPosition, targetLookAt);
+    flyTo(targetPosition, targetLookAt, 1200);
 
     // Setze den Drehpunkt (target) auf die gewünschte Position
     controls.target.set(targetLookAt.x, targetLookAt.y, targetLookAt.z);
@@ -426,6 +425,10 @@ export function leaveView() {
 
     leaveMarshall.visible = false;
     leaveMischraum.visible = false;
+}
+
+if (typeof window !== 'undefined') {
+  window.leaveView = leaveView;
 }
 
 export async  function toMarshall() {
