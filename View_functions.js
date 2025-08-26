@@ -17,6 +17,52 @@ function applyToAllMeshes(callback) {
   });
 }
 
+export function animateCamera(targetPosition, targetLookAt, duration = 1000) {
+  return new Promise((resolve) => {
+    const start = performance.now();
+
+    const startPos = camera.position.clone();
+
+    // aktuellen LookAt rekonstruieren (aus Blickrichtung + Position)
+    const dir = new THREE.Vector3();
+    camera.getWorldDirection(dir);
+    const startLook = camera.position.clone().add(dir);
+
+    const endPos = targetPosition.clone();
+    const endLook = targetLookAt.clone();
+
+    // sanftes Easing
+    const easeInOut = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+
+    function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const k = easeInOut(t);
+
+      // Interpolation
+      camera.position.lerpVectors(startPos, endPos, k);
+      const look = new THREE.Vector3().lerpVectors(startLook, endLook, k);
+      camera.lookAt(look);
+
+      // Controls „mitnehmen“
+      controls.target.copy(look);
+      controls.update();
+
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        // final exakt setzen
+        camera.position.copy(endPos);
+        camera.lookAt(endLook);
+        controls.target.copy(endLook);
+        controls.update();
+        resolve();
+      }
+    }
+
+    requestAnimationFrame(step);
+  });
+}
+
 //Orbit Controls
 export let controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;  // Smooth Camera Movements
