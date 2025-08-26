@@ -122,6 +122,16 @@ export const quizFragen = {
     }
 };
 
+function shuffleArray(arr) {
+  const a = [...arr];                    // Original unangetastet lassen
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1)); // Fisher–Yates
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+
 async function getDatabase() {
     while (!window.firebaseDB) {
         await new Promise(resolve => setTimeout(resolve, 100)); // Warten, bis Firebase geladen ist
@@ -185,32 +195,39 @@ export async function zeigeQuiz(raum) {
             const optionenContainer = document.getElementById("quizOptionen");
             optionenContainer.innerHTML = "";
 
-            frageObjekt.optionen.forEach(option => {
+            // >>> NEU: pro Aufruf mischen (ohne Original zu verändern)
+            const shuffledOptions = shuffleArray(frageObjekt.optionen);
+
+            shuffledOptions.forEach(option => {
                 const button = document.createElement("button");
                 button.innerText = option;
                 button.classList.add("quiz-option");
 
+                // optional: Doppel-Klicks verhindern
                 button.addEventListener("click", async () => {
-                    const korrekt = frageObjekt.antwort === option;
-                    const punkte = korrekt ? 10 : 0;
+                // Buttons sofort deaktivieren, um Mehrfachklicks zu vermeiden
+                optionenContainer.querySelectorAll("button").forEach(b => b.disabled = true);
 
-                    await sendQuizAnswer(
-                        userId,
-                        raum,
-                        option,
-                        punkte,
-                        frageObjekt.frage,
-                        frageObjekt.antwort
-                    );
+                const korrekt = frageObjekt.antwort === option;
+                const punkte = korrekt ? 10 : 0;
 
-                    schließeQuiz();
-                    resolve();
+                await sendQuizAnswer(
+                    userId,
+                    raum,
+                    option,
+                    punkte,
+                    frageObjekt.frage,
+                    frageObjekt.antwort
+                );
+
+                schließeQuiz();
+                resolve();
                 });
 
                 optionenContainer.appendChild(button);
             });
 
-            document.getElementById("quizContainer").style.display = "block";
+        document.getElementById("quizContainer").style.display = "block";
         }
     });
 }
