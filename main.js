@@ -8,6 +8,50 @@ export let mouse = new THREE.Vector2();
 // Raycaster und Mauskoordinaten definieren
 export let raycaster = new THREE.Raycaster();
 
+async function handleLogin() {
+  const matrikel = document.getElementById('userIdInput')?.value?.trim();
+  const password = document.getElementById('passwordInput')?.value || '';
+
+  if (!matrikel || !password) {
+    alert('Bitte Matrikelnummer und Passwort eingeben.');
+    return;
+  }
+
+  try {
+    // URL zu deinem Backend (z. B. Vercel)
+    const resp = await fetch('https://<dein-backend-host>/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ matrikelnummer: matrikel, password })
+    });
+
+    const json = await resp.json();
+    if (!json.ok) {
+      alert(json.message || 'Login fehlgeschlagen');
+      return;
+    }
+
+    // Erfolg → deine bisherige App-Logik weiterverwenden
+    window.setUserId(json.matrikelnummer);
+
+    // UI schließen
+    document.getElementById('userIdContainer')?.classList.add('fade-out');
+    setTimeout(() => {
+      const el = document.getElementById('userIdContainer');
+      if (el) el.style.display = 'none';
+    }, 300);
+  } catch (e) {
+    console.error(e);
+    alert('Netzwerk-/Serverfehler beim Login');
+  }
+}
+
+// Event-Binding
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('loginBtn');
+  if (btn) btn.addEventListener('click', handleLogin);
+});
+
 async function sendDataToServer(userId, data) {
     const response = await fetch(`${BACKEND_URL}/api/data`, {
         method: "POST",
