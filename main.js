@@ -8,43 +8,44 @@ export let mouse = new THREE.Vector2();
 // Raycaster und Mauskoordinaten definieren
 export let raycaster = new THREE.Raycaster();
 
-async function handleLogin() {
-  const matrikel = document.getElementById('userIdInput')?.value?.trim();
-  const password = document.getElementById('passwordInput')?.value || '';
+window.handleLogin = async function handleLogin() {
+  const matrikelEl = document.getElementById('userIdInput');
+  const passEl = document.getElementById('passwordInput');
+  const matrikelnummer = (matrikelEl?.value || '').trim();
+  const password = passEl?.value || '';
 
-  if (!matrikel || !password) {
+  if (!matrikelnummer || !password) {
     alert('Bitte Matrikelnummer und Passwort eingeben.');
     return;
   }
 
   try {
-    // URL zu deinem Backend (z. B. Vercel)
-    const resp = await fetch('https://<dein-backend-host>/login', {
+    const resp = await fetch(`${API_BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ matrikelnummer: matrikel, password })
+      body: JSON.stringify({ matrikelnummer, password })
     });
 
     const json = await resp.json();
-    if (!json.ok) {
+    if (!resp.ok || !json.ok) {
       alert(json.message || 'Login fehlgeschlagen');
       return;
     }
 
-    // Erfolg → deine bisherige App-Logik weiterverwenden
+    // Erfolg → deine alte Logik weiterverwenden
     window.setUserId(json.matrikelnummer);
 
     // UI schließen
-    document.getElementById('userIdContainer')?.classList.add('fade-out');
-    setTimeout(() => {
-      const el = document.getElementById('userIdContainer');
-      if (el) el.style.display = 'none';
-    }, 300);
+    const box = document.getElementById('userIdContainer');
+    if (box) {
+      box.classList.add('fade-out');
+      setTimeout(() => (box.style.display = 'none'), 300);
+    }
   } catch (e) {
-    console.error(e);
+    console.error('[handleLogin] error', e);
     alert('Netzwerk-/Serverfehler beim Login');
   }
-}
+};
 
 // Event-Binding
 document.addEventListener('DOMContentLoaded', () => {
